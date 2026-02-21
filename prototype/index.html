@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compensa App — Protótipo Visual</title>
+    <style>
+        /* ========== RESET & BASE ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            gap: 40px;
+        }
+
+        /* ========== PHONE FRAME ========== */
+        .phone-frame {
+            width: 390px;
+            min-height: 844px;
+            background: #0a0a0f;
+            border-radius: 40px;
+            border: 3px solid #2a2a3a;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+            flex-shrink: 0;
+        }
+
+        /* Status bar */
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 28px 8px;
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .status-bar .time {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .status-bar .icons {
+            display: flex;
+            gap: 6px;
+            font-size: 12px;
+        }
+
+        /* ========== TOP TABS ========== */
+        .top-tabs {
+            display: flex;
+            background: #0a0a0f;
+            border-bottom: 1px solid #1a1a2e;
+            padding: 0 16px;
+        }
+
+        .top-tab {
+            flex: 1;
+            text-align: center;
+            padding: 14px 0 12px;
+            font-size: 15px;
+            font-weight: 600;
+            color: #555570;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .top-tab.active {
+            color: #ffffff;
+            border-bottom-color: #6c5ce7;
+        }
+
+        .top-tab:hover:not(.active) {
+            color: #8888a0;
+        }
+
+        /* ========== SCREEN CONTENT ========== */
+        .screen-content {
+            height: 740px;
+            overflow-y: auto;
+            padding: 0 0 20px;
+            scrollbar-width: none;
+        }
+
+        .screen-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* ========== COLOR SYSTEM ========== */
+        :root {
+            /* ====================================================
+               🎛️  CONFIGURAÇÃO DE TAMANHOS — AJUSTE AQUI
+               Mude esses valores para testar tamanhos diferentes.
+               Depois de alterar, salve e recarregue o browser.
+               ==================================================== */
+
+            /* -- Inputs (valor + taxa) -- */
+            --input-font-size: 18px;
+            /* era 22px — tamanho do número digitado */
+            --input-padding-v: 10px;
+            /* era 14px — padding vertical do input  */
+            --input-padding-h: 14px;
+            /* era 16px — padding horizontal do input */
+            --input-border-radius: 10px;
+            /* era 12px — arredondamento do input     */
+            --input-prefix-size: 15px;
+            /* era 18px — tamanho do "R$"              */
+            --input-suffix-size: 13px;
+            /* era 16px — tamanho do "% a.a."          */
+            --input-label-size: 12px;
+            /* era 13px — tamanho do label acima       */
+            --input-group-margin-bottom: 10px;
+            /* era 12px — espaço entre inputs          */
+
+            /* -- Taxa RF input (pode ter tamanho diferente) -- */
+            --input-rate-font-size: 16px;
+            /* era 20px — tamanho do número da taxa    */
+
+            /* -- Market Chips (BTC + SELIC) -- */
+            --chip-padding-v: 8px;
+            /* era 10px — padding vertical do chip     */
+            --chip-padding-h: 10px;
+            /* era 12px — padding horizontal do chip   */
+            --chip-icon-size: 16px;
+            /* era 20px — tamanho do ícone ₿ / 📊      */
+            --chip-label-size: 9px;
+            /* era 10px — tamanho do "BITCOIN"/"SELIC" */
+            --chip-value-size: 12px;
+            /* era 13px — tamanho do valor R$ / %      */
+            --chip-border-radius: 10px;
+            /* era 12px — arredondamento do chip       */
+            --chip-gap: 6px;
+            /* era 8px  — espaço entre os dois chips   */
+            --chip-margin-bottom: 12px;
+            /* era 16px — espaço abaixo dos chips      */
+
+            /* -- Botão "Resolvi Economizar" -- */
+            --btn-padding-v: 14px;
+            /* era 18px — padding vertical do botão    */
+            --btn-font-size: 14px;
+            /* era 16px — tamanho do texto do botão    */
+            --btn-border-radius: 12px;
+            /* era 16px — arredondamento do botão      */
+            --btn-margin-top: 16px;
+            /* era 20px — espaço acima do botão        */
+            --btn-gap: 8px;
+            /* era 10px — espaço entre ícone e texto   */
+
+            /* -- Ranking Top 5 -- */
+            --rank-padding-v: 7px;
+            /* era 10px — padding vertical do item     */
+            --rank-padding-h: 10px;
+            /* era 14px — padding horizontal do item   */
+            --rank-gap: 8px;
+            /* era 12px — espaço entre posição e texto */
+            --rank-item-radius: 10px;
+            /* era 12px — arredondamento do item       */
+            --rank-item-margin: 4px;
+            /* era 6px  — espaço entre itens           */
+            --rank-badge-size: 22px;
+            /* era 28px — tamanho do badge numérico    */
+            --rank-badge-radius: 6px;
+            /* era 8px  — arredondamento do badge      */
+            --rank-badge-font: 11px;
+            /* era 13px — tamanho do número no badge   */
+            --rank-amount-size: 13px;
+            /* era 15px — tamanho do valor R$          */
+            --rank-date-size: 10px;
+            /* era 11px — tamanho da data              */
+
+            /* -- Hero (título do Simulador) -- */
+            --hero-title-size: 19px;
+            /* era 22px — título "Quanto você gastaria?" */
+            --hero-subtitle-size: 11px;
+            /* era 13px — subtítulo                     */
+            --hero-padding-top: 16px;
+            /* era 20px — espaço acima do hero          */
+
+            /* -- Section Titles (títulos de seção) -- */
+            --section-title-size: 11px;
+            /* era 13px — tamanho do título de seção    */
+            --section-title-margin-top: 16px;
+            /* era 20px — espaço acima do título        */
+            --section-title-margin-bottom: 10px;
+            /* era 12px — espaço abaixo do título       */
+
+            /* -- Projection Cards (1a, 5a, 10a) -- */
+            --proj-card-radius: 12px;
+            /* era 16px — arredondamento do card        */
+            --proj-card-margin: 8px;
+            /* era 10px — espaço entre cards            */
+            --proj-header-padding-v: 10px;
+            /* era 14px — padding top do header         */
+            --proj-header-padding-h: 14px;
+            /* era 16px — padding horizontal            */
+            --proj-period-size: 12px;
+            /* era 14px — tamanho "10 anos"              */
+            --proj-body-padding-v: 8px;
+            /* era 10px/14px — padding vertical body    */
+            --proj-body-gap: 6px;
+            /* era 8px — espaço entre linhas             */
+            --proj-label-size: 11px;
+            /* era 13px — "Renda Fixa" / "Bitcoin"       */
+            --proj-value-size: 12px;
+            /* era 14px — valor R$ projetado            */
+            --proj-gain-size: 10px;
+            /* era 11px — badge de percentual           */
+            --proj-sub-size: 10px;
+            /* era 11px — texto "≈ 0,001824 BTC"        */
+            --proj-dot-size: 6px;
+            /* era 8px — bolinha colorida RF/BTC        */
+
+            /* -- Summary Cards (Resumo no Histórico) -- */
+            --summary-grid-gap: 8px;
+            /* era 10px — espaço entre cards            */
+            --summary-card-padding: 11px;
+            /* era 14px — padding interno               */
+            --summary-card-radius: 12px;
+            /* era 14px — arredondamento                */
+            --summary-label-size: 10px;
+            /* era 11px — label "TOTAL ECONOMIZADO"     */
+            --summary-value-size: 17px;
+            /* era 20px — valor R$                      */
+            --summary-detail-size: 10px;
+            /* era 11px — detalhe "▲ +R$ 1.461"         */
+
+            /* -- Discipline Stats -- */
+            --disc-gap: 8px;
+            /* era 10px — espaço entre cards            */
+            --disc-padding: 10px;
+            /* era 14px — padding interno               */
+            --disc-radius: 12px;
+            /* era 14px — arredondamento                */
+            --disc-emoji-size: 20px;
+            /* era 24px — tamanho do emoji              */
+            --disc-number-size: 15px;
+            /* era 18px — valor numérico                */
+            --disc-label-size: 9px;
+            /* era 10px — label "REGISTROS" etc          */
+
+            /* -- History Items (lista de economias) -- */
+            --hist-item-padding-v: 10px;
+            /* era 14px — padding vertical do item      */
+            --hist-item-padding-h: 12px;
+            /* era 16px — padding horizontal            */
+            --hist-item-radius: 12px;
+            /* era 14px — arredondamento                */
+            --hist-item-margin: 6px;
+            /* era 8px — espaço entre itens              */
+            --hist-header-margin: 8px;
+            /* era 10px — espaço entre header e projs   */
+            --hist-date-size: 10px;
+            /* era 12px — tamanho da data               */
+            --hist-amount-size: 15px;
+            /* era 18px — valor R$ economizado          */
+            --hist-proj-gap: 6px;
+            /* era 8px — espaço entre cards RF/BTC      */
+            --hist-proj-padding: 6px;
+            /* era 8px — padding do card RF/BTC         */
+            --hist-proj-radius: 8px;
+            /* era 10px — arredondamento                */
+            --hist-proj-label-size: 9px;
+            /* era 10px — "RF HOJE" / "BTC HOJE"        */
+            --hist-proj-value-size: 12px;
+            /* era 14px — valor projetado               */
+            --hist-proj-gain-size: 9px;
+            /* era 10px — percentual ▲/▼                */
+
+            /* ====================================================
+               Cores — não mexa aqui, mexa só nos tamanhos acima
+               ==================================================== */
+            --bg-primary: #0a0a0f;
+            --bg-card: #12121e;
+            --bg-card-hover: #1a1a2e;
+            --bg-input: #16162a;
+            --border: #2a2a3a;
+            --border-focus: #6c5ce7;
+
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b8;
+            --text-muted: #555570;
+            --text-label: #7878a0;
+
+            --accent: #6c5ce7;
+            --accent-soft: rgba(108, 92, 231, 0.15);
+
+            --green: #00d68f;
+            --green-soft: rgba(0, 214, 143, 0.12);
+            --green-text: #00e69a;
+
+            --red: #ff4757;
+            --red-soft: rgba(255, 71, 87, 0.12);
+            --red-text: #ff6b7a;
+
+            --orange: #ffa726;
+            --orange-soft: rgba(255, 167, 38, 0.12);
+
+            --btc-orange: #f7931a;
+            --btc-soft: rgba(247, 147, 26, 0.12);
+        }
+
+        /* ========== COMMON COMPONENTS ========== */
+        .section-padding {
+            padding: 0 20px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            margin: 0 20px 12px;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .card-header .icon {
+            font-size: 18px;
+        }
+
+        .card-header .title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 20px;
+        }
+
+        /* ========== SIMULATOR SCREEN ========== */
+
+        /* Input Groups */
+        .input-group {
+            margin: 0 20px var(--input-group-margin-bottom);
+        }
+
+        .input-label {
+            font-size: var(--input-label-size);
+            font-weight: 500;
+            color: var(--text-label);
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1.5px solid var(--border);
+            border-radius: var(--input-border-radius);
+            padding: var(--input-padding-v) var(--input-padding-h);
+            color: var(--text-primary);
+            font-size: var(--input-font-size);
+            font-weight: 700;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus {
+            border-color: var(--border-focus);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .input-prefix {
+            position: relative;
+        }
+
+        .input-prefix .prefix {
+            position: absolute;
+            left: var(--input-padding-h);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: var(--input-prefix-size);
+            font-weight: 600;
+        }
+
+        .input-prefix .input-field {
+            padding-left: 42px;
+        }
+
+        .input-suffix {
+            position: relative;
+        }
+
+        .input-suffix .suffix {
+            position: absolute;
+            right: var(--input-padding-h);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: var(--input-suffix-size);
+            font-weight: 500;
+        }
+
+        .input-suffix .input-field {
+            padding-right: 50px;
+            font-size: var(--input-rate-font-size);
+        }
+
+        /* Market Info Bar */
+        .market-bar {
+            display: flex;
+            gap: var(--chip-gap);
+            margin: 4px 20px var(--chip-margin-bottom);
+        }
+
+        .market-chip {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--chip-border-radius);
+            padding: var(--chip-padding-v) var(--chip-padding-h);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .market-chip .chip-icon {
+            font-size: var(--chip-icon-size);
+        }
+
+        .market-chip .chip-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .market-chip .chip-label {
+            font-size: var(--chip-label-size);
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .market-chip .chip-value {
+            font-size: var(--chip-value-size);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .market-chip.btc {
+            border-color: rgba(247, 147, 26, 0.3);
+        }
+
+        .market-chip.btc .chip-value {
+            color: var(--btc-orange);
+        }
+
+        .market-chip.selic {
+            border-color: rgba(108, 92, 231, 0.3);
+        }
+
+        .market-chip.selic .chip-value {
+            color: var(--accent);
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: var(--section-title-size);
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: var(--section-title-margin-top) 20px var(--section-title-margin-bottom);
+        }
+
+        /* Projection Cards */
+        .projection-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--proj-card-radius);
+            margin: 0 20px var(--proj-card-margin);
+            overflow: hidden;
+        }
+
+        .projection-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--proj-header-padding-v) var(--proj-header-padding-h) 0;
+        }
+
+        .projection-period {
+            font-size: var(--proj-period-size);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .projection-period .period-emoji {
+            margin-right: 6px;
+        }
+
+        .projection-body {
+            padding: var(--proj-body-padding-v) var(--proj-header-padding-h) var(--proj-body-padding-v);
+            display: flex;
+            flex-direction: column;
+            gap: var(--proj-body-gap);
+        }
+
+        .projection-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .projection-label {
+            font-size: var(--proj-label-size);
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .projection-label .dot {
+            width: var(--proj-dot-size);
+            height: var(--proj-dot-size);
+            border-radius: 50%;
+        }
+
+        .dot.rf {
+            background: var(--green);
+        }
+
+        .dot.btc {
+            background: var(--btc-orange);
+        }
+
+        .projection-value {
+            font-size: var(--proj-value-size);
+            font-weight: 700;
+        }
+
+        .projection-value.positive {
+            color: var(--green-text);
+        }
+
+        .projection-value.btc-color {
+            color: var(--btc-orange);
+        }
+
+        .projection-sub {
+            font-size: var(--proj-sub-size);
+            color: var(--text-muted);
+            text-align: right;
+        }
+
+        .projection-sub-row {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .projection-gain {
+            font-size: var(--proj-gain-size);
+            padding: 2px 6px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+
+        .projection-gain.positive {
+            background: var(--green-soft);
+            color: var(--green-text);
+        }
+
+        .projection-gain.negative {
+            background: var(--red-soft);
+            color: var(--red-text);
+        }
+
+        /* Save Button — fixed footer */
+        .save-button-wrapper {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0 20px 16px;
+            background: linear-gradient(to top, #0a0a0f 60%, transparent 100%);
+            z-index: 5;
+        }
+
+        .save-button {
+            background: linear-gradient(135deg, #1a1a2e 0%, #12121e 100%);
+            border: 1.5px solid rgba(0, 214, 143, 0.35);
+            border-radius: var(--btn-border-radius);
+            padding: var(--btn-padding-v);
+            color: var(--green-text);
+            font-size: var(--btn-font-size);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--btn-gap);
+            transition: all 0.2s ease;
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0, 214, 143, 0.08), 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .save-button:hover {
+            border-color: rgba(0, 214, 143, 0.6);
+            box-shadow: 0 0 24px rgba(0, 214, 143, 0.15), 0 4px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .save-button:active {
+            transform: scale(0.98);
+            border-color: rgba(0, 214, 143, 0.8);
+            box-shadow: 0 0 28px rgba(0, 214, 143, 0.2), 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        .save-button .btn-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(0, 214, 143, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: var(--green-text);
+            flex-shrink: 0;
+        }
+
+        .data-timestamp {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            padding: 10px 0 4px;
+        }
+
+        .hero-section {
+            padding: var(--hero-padding-top) 20px 4px;
+        }
+
+        .hero-title {
+            font-size: var(--hero-title-size);
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .hero-subtitle {
+            font-size: var(--hero-subtitle-size);
+            color: var(--text-muted);
+        }
+
+        /* ========== HISTORY SCREEN ========== */
+
+        /* Summary Cards */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--summary-grid-gap);
+            margin: 0 20px var(--summary-grid-gap);
+        }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--summary-card-radius);
+            padding: var(--summary-card-padding);
+        }
+
+        .summary-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .summary-label {
+            font-size: var(--summary-label-size);
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: var(--summary-value-size);
+            font-weight: 800;
+        }
+
+        .summary-value.white {
+            color: var(--text-primary);
+        }
+
+        .summary-value.green {
+            color: var(--green-text);
+        }
+
+        .summary-value.orange {
+            color: var(--btc-orange);
+        }
+
+        .summary-detail {
+            font-size: var(--summary-detail-size);
+            margin-top: 3px;
+            font-weight: 600;
+        }
+
+        .summary-detail.green {
+            color: var(--green-text);
+        }
+
+        .summary-detail.orange {
+            color: var(--btc-orange);
+        }
+
+        /* Discipline */
+        .discipline-bar {
+            display: flex;
+            gap: var(--disc-gap);
+            margin: 0 20px var(--disc-gap);
+        }
+
+        .discipline-stat {
+            flex: 1;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--disc-radius);
+            padding: var(--disc-padding);
+            text-align: center;
+        }
+
+        .discipline-emoji {
+            font-size: var(--disc-emoji-size);
+            margin-bottom: 2px;
+        }
+
+        .discipline-number {
+            font-size: var(--disc-number-size);
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .discipline-label {
+            font-size: var(--disc-label-size);
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+        }
+
+        /* Top Ranking */
+        .ranking-list {
+            margin: 0 20px 8px;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: var(--rank-gap);
+            padding: var(--rank-padding-v) var(--rank-padding-h);
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--rank-item-radius);
+            margin-bottom: var(--rank-item-margin);
+        }
+
+        .ranking-position {
+            width: var(--rank-badge-size);
+            height: var(--rank-badge-size);
+            border-radius: var(--rank-badge-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--rank-badge-font);
+            font-weight: 800;
+        }
+
+        .ranking-position.gold {
+            background: rgba(255, 215, 0, 0.15);
+            color: #ffd700;
+        }
+
+        .ranking-position.silver {
+            background: rgba(192, 192, 192, 0.15);
+            color: #c0c0c0;
+        }
+
+        .ranking-position.bronze {
+            background: rgba(205, 127, 50, 0.15);
+            color: #cd7f32;
+        }
+
+        .ranking-position.normal {
+            background: var(--bg-card-hover);
+            color: var(--text-muted);
+        }
+
+        .ranking-info {
+            flex: 1;
+        }
+
+        .ranking-amount {
+            font-size: var(--rank-amount-size);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .ranking-date {
+            font-size: var(--rank-date-size);
+            color: var(--text-muted);
+        }
+
+        /* Chart Placeholder */
+        .chart-container {
+            margin: 0 20px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            height: 200px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .chart-legend {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+        }
+
+        .chart-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .chart-legend-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        /* Fake chart lines */
+        .chart-area {
+            position: relative;
+            height: 120px;
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .chart-line {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100%;
+        }
+
+        .chart-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* History List */
+        .history-list {
+            margin: 0 20px;
+        }
+
+        .history-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--hist-item-radius);
+            padding: var(--hist-item-padding-v) var(--hist-item-padding-h);
+            margin-bottom: var(--hist-item-margin);
+        }
+
+        .history-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--hist-header-margin);
+        }
+
+        .history-date {
+            font-size: var(--hist-date-size);
+            color: var(--text-muted);
+        }
+
+        .history-amount {
+            font-size: var(--hist-amount-size);
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+
+        .history-projections {
+            display: flex;
+            gap: var(--hist-proj-gap);
+        }
+
+        .history-proj {
+            flex: 1;
+            padding: var(--hist-proj-padding);
+            border-radius: var(--hist-proj-radius);
+            text-align: center;
+        }
+
+        .history-proj.rf {
+            background: var(--green-soft);
+        }
+
+        .history-proj.btc {
+            background: var(--btc-soft);
+        }
+
+        .history-proj-label {
+            font-size: var(--hist-proj-label-size);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+
+        .history-proj.rf .history-proj-label {
+            color: var(--green);
+        }
+
+        .history-proj.btc .history-proj-label {
+            color: var(--btc-orange);
+        }
+
+        .history-proj-value {
+            font-size: var(--hist-proj-value-size);
+            font-weight: 700;
+        }
+
+        .history-proj.rf .history-proj-value {
+            color: var(--green-text);
+        }
+
+        .history-proj.btc .history-proj-value {
+            color: var(--btc-orange);
+        }
+
+        .history-proj-gain {
+            font-size: var(--hist-proj-gain-size);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+
+        .gain-positive {
+            color: var(--green-text);
+        }
+
+        .gain-negative {
+            color: var(--red-text);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--text-muted);
+        }
+
+        .empty-state .empty-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state .empty-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .empty-state .empty-sub {
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        /* ========== ANNOTATIONS (design notes) ========== */
+        .annotations {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: #16162a;
+            border: 1px solid #2a2a3a;
+            border-radius: 16px;
+            padding: 20px;
+            color: #a0a0b8;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .annotations h3 {
+            color: #fff;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .annotations .color-sample {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        .annotations ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .annotations li {
+            margin-bottom: 8px;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 900px) {
+            body {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .annotations {
+                position: static;
+                width: 390px;
+                margin-bottom: 20px;
+            }
+        }
+
+        /* ========== TOAST ========== */
+        .toast {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: var(--green);
+            color: #000;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            opacity: 0;
+            transition: all 0.3s;
+            pointer-events: none;
+            z-index: 10;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Collapse toggle */
+        .collapse-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapse-toggle .arrow {
+            font-size: 12px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+
+        .collapse-toggle.open .arrow {
+            transform: rotate(180deg);
+        }
+
+        /* Negative projection example */
+        .projection-value.negative {
+            color: var(--red-text);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== PHONE 1: SIMULATOR ==================== -->
+    <div class="phone-frame" id="phone1">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span class="time">9:41</span>
+            <span class="icons">📶 🔋</span>
+        </div>
+
+        <!-- Top Tabs -->
+        <div class="top-tabs">
+            <div class="top-tab active" onclick="switchTab('phone1', 'simulator')">Simulador</div>
+            <div class="top-tab" onclick="switchTab('phone1', 'resumo')">Resumo</div>
+            <div class="top-tab" onclick="switchTab('phone1', 'history')">Histórico</div>
+        </div>
+
+        <div class="screen-content">
+            <!-- ===== SIMULATOR SCREEN ===== -->
+            <div class="screen active" id="phone1-simulator">
+
+                <div class="hero-section">
+                    <div class="hero-title">Quanto você gastaria?</div>
+                    <div class="hero-subtitle">Simule o que esse valor renderia investido</div>
+                </div>
+
+                <!-- Input: Valor -->
+                <div style="height: 12px;"></div>
+                <div class="input-group">
+                    <label class="input-label">Valor do gasto</label>
+                    <div class="input-prefix">
+                        <span class="prefix">R$</span>
+                        <input class="input-field" type="text" value="1.000,00" placeholder="0,00">
+                    </div>
+                </div>
+
+                <!-- Input: Taxa RF -->
+                <div class="input-group">
+                    <label class="input-label">Taxa renda fixa (% ao ano)</label>
+                    <div class="input-suffix">
+                        <input class="input-field" type="text" value="12,50" placeholder="0,00">
+                        <span class="suffix">% a.a.</span>
+                    </div>
+                </div>
+
+                <!-- Market Info -->
+                <div class="market-bar">
+                    <div class="market-chip btc">
+                        <span class="chip-icon">₿</span>
+                        <div class="chip-content">
+                            <span class="chip-label">Bitcoin</span>
+                            <span class="chip-value">R$ 548.230</span>
+                        </div>
+                    </div>
+                    <div class="market-chip selic">
+                        <span class="chip-icon">📊</span>
+                        <div class="chip-content">
+                            <span class="chip-label">SELIC</span>
+                            <span class="chip-value">14,25% a.a.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Projections -->
+                <div class="section-title">📈 Projeções</div>
+
+                <!-- 10 Years -->
+                <div class="projection-card">
+                    <div class="projection-header">
+                        <span class="projection-period"><span class="period-emoji">📅</span> 10 anos</span>
+                    </div>
+                    <div class="projection-body">
+                        <div class="projection-row">
+                            <span class="projection-label"><span class="dot btc"></span> Bitcoin</span>
+                            <div style="text-align: right;">
+                                <div class="projection-value btc-color">R$ 52.740,80</div>
+                                <div class="projection-gain positive">+5.174,08%</div>
+                            </div>
+                        </div>
+                        <div class="projection-row">
+                            <span class="projection-label"><span class="dot rf"></span> Renda Fixa</span>
+                            <div style="text-align: right;">
+                                <div class="projection-value positive">R$ 3.247,32</div>
+                                <div class="projection-gain positive">+224,73%</div>
+                            </div>
+                        </div>
+                        <div class="projection-sub-row">
+                            <span class="projection-sub">≈ 0,001824 BTC → R$ 52.740,80</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 1 Year -->
+                <div class="projection-card">
+                    <div class="projection-header">
+                        <span class="projection-period"><span class="period-emoji">📅</span> 1 ano</span>
+                    </div>
+                    <div class="projection-body">
+                        <div class="projection-row">
+                            <span class="projection-label"><span class="dot btc"></span> Bitcoin</span>
+                            <div style="text-align: right;">
+                                <div class="projection-value btc-color">R$ 1.632,00</div>
+                                <div class="projection-gain positive">+63,20%</div>
+                            </div>
+                        </div>
+                        <div class="projection-row">
+                            <span class="projection-label"><span class="dot rf"></span> Renda Fixa</span>
+                            <div style="text-align: right;">
+                                <div class="projection-value positive">R$ 1.125,00</div>
+                                <div class="projection-gain positive">+12,50%</div>
+                            </div>
+                        </div>
+                        <div class="projection-sub-row">
+                            <span class="projection-sub">≈ 0,001824 BTC</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="data-timestamp">Dados atualizados em 21/02/2026 às 09:41</div>
+
+                <!-- Spacer so content isn't hidden behind fixed button -->
+                <div style="height: 60px;"></div>
+
+            </div>
+
+            <!-- ===== RESUMO SCREEN ===== -->
+            <div class="screen" id="phone1-resumo">
+
+                <div style="height: 16px;"></div>
+
+                <!-- Summary -->
+                <div class="section-title">💰 Resumo</div>
+                <div class="summary-grid">
+                    <div class="summary-card full-width">
+                        <div class="summary-label">Total Economizado</div>
+                        <div class="summary-value white">R$ 15.430,00</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Projeção RF Atual</div>
+                        <div class="summary-value green">R$ 16.891,20</div>
+                        <div class="summary-detail green">▲ +R$ 1.461,20 (+9,47%)</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">Projeção BTC Atual</div>
+                        <div class="summary-value orange">R$ 22.340,50</div>
+                        <div class="summary-detail orange">▲ +R$ 6.910,50 (+44,79%)</div>
+                    </div>
+                </div>
+
+                <!-- Discipline -->
+                <div class="section-title">🏆 Disciplina</div>
+                <div class="discipline-bar">
+                    <div class="discipline-stat">
+                        <div class="discipline-emoji">📝</div>
+                        <div class="discipline-number">32</div>
+                        <div class="discipline-label">Registros</div>
+                    </div>
+                    <div class="discipline-stat">
+                        <div class="discipline-emoji">📅</div>
+                        <div class="discipline-number">R$ 482</div>
+                        <div class="discipline-label">Média / mês</div>
+                    </div>
+                    <div class="discipline-stat">
+                        <div class="discipline-emoji">🔥</div>
+                        <div class="discipline-number">5</div>
+                        <div class="discipline-label">Meses seguidos</div>
+                    </div>
+                </div>
+
+                <!-- Top 5 -->
+                <div class="section-title">🥇 Top 5 Maiores</div>
+                <div class="ranking-list">
+                    <div class="ranking-item">
+                        <div class="ranking-position gold">1</div>
+                        <div class="ranking-info">
+                            <div class="ranking-amount">R$ 2.500,00</div>
+                            <div class="ranking-date">15/01/2026</div>
+                        </div>
+                    </div>
+                    <div class="ranking-item">
+                        <div class="ranking-position silver">2</div>
+                        <div class="ranking-info">
+                            <div class="ranking-amount">R$ 1.800,00</div>
+                            <div class="ranking-date">03/02/2026</div>
+                        </div>
+                    </div>
+                    <div class="ranking-item">
+                        <div class="ranking-position bronze">3</div>
+                        <div class="ranking-info">
+                            <div class="ranking-amount">R$ 1.500,00</div>
+                            <div class="ranking-date">22/12/2025</div>
+                        </div>
+                    </div>
+                    <div class="ranking-item">
+                        <div class="ranking-position normal">4</div>
+                        <div class="ranking-info">
+                            <div class="ranking-amount">R$ 1.200,00</div>
+                            <div class="ranking-date">10/01/2026</div>
+                        </div>
+                    </div>
+                    <div class="ranking-item">
+                        <div class="ranking-position normal">5</div>
+                        <div class="ranking-info">
+                            <div class="ranking-amount">R$ 980,00</div>
+                            <div class="ranking-date">28/11/2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 20px;"></div>
+            </div>
+
+            <!-- ===== HISTORY SCREEN ===== -->
+            <div class="screen" id="phone1-history">
+
+                <div style="height: 16px;"></div>
+
+                <!-- Chart -->
+                <div class="section-title">📊 Crescimento Comparativo</div>
+                <div class="chart-container">
+                    <div class="chart-legend">
+                        <div class="chart-legend-item">
+                            <div class="chart-legend-dot" style="background: var(--green);"></div>
+                            Renda Fixa
+                        </div>
+                        <div class="chart-legend-item">
+                            <div class="chart-legend-dot" style="background: var(--btc-orange);"></div>
+                            Bitcoin
+                        </div>
+                        <div class="chart-legend-item">
+                            <div class="chart-legend-dot" style="background: var(--text-muted);"></div>
+                            Economizado
+                        </div>
+                    </div>
+                    <div class="chart-area">
+                        <svg class="chart-svg" viewBox="0 0 320 110" fill="none">
+                            <!-- Grid lines -->
+                            <line x1="0" y1="27" x2="320" y2="27" stroke="#1a1a2e" stroke-width="1" />
+                            <line x1="0" y1="55" x2="320" y2="55" stroke="#1a1a2e" stroke-width="1" />
+                            <line x1="0" y1="82" x2="320" y2="82" stroke="#1a1a2e" stroke-width="1" />
+
+                            <!-- Base line (valor economizado) -->
+                            <polyline points="0,100 45,92 90,85 135,78 180,70 225,60 270,52 320,45" stroke="#555570"
+                                stroke-width="1.5" stroke-dasharray="4,4" fill="none" />
+
+                            <!-- Renda Fixa line -->
+                            <polyline points="0,100 45,90 90,81 135,72 180,62 225,50 270,40 320,32" stroke="#00d68f"
+                                stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                            <!-- RF area -->
+                            <polygon points="0,100 45,90 90,81 135,72 180,62 225,50 270,40 320,32 320,110 0,110"
+                                fill="url(#rfGradient)" opacity="0.3" />
+
+                            <!-- Bitcoin line -->
+                            <polyline points="0,100 45,95 90,80 135,88 180,55 225,35 270,20 320,5" stroke="#f7931a"
+                                stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" />
+                            <!-- BTC area -->
+                            <polygon points="0,100 45,95 90,80 135,88 180,55 225,35 270,20 320,5 320,110 0,110"
+                                fill="url(#btcGradient)" opacity="0.2" />
+
+                            <defs>
+                                <linearGradient id="rfGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#00d68f" />
+                                    <stop offset="100%" stop-color="#00d68f" stop-opacity="0" />
+                                </linearGradient>
+                                <linearGradient id="btcGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#f7931a" />
+                                    <stop offset="100%" stop-color="#f7931a" stop-opacity="0" />
+                                </linearGradient>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- History List -->
+                <div class="section-title">📋 Histórico Completo</div>
+                <div class="history-list">
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-date">21/02/2026</span>
+                            <span class="history-amount">R$ 350,00</span>
+                        </div>
+                        <div class="history-projections">
+                            <div class="history-proj rf">
+                                <div class="history-proj-label">RF Hoje</div>
+                                <div class="history-proj-value">R$ 351,20</div>
+                                <div class="history-proj-gain gain-positive">▲ +0,34%</div>
+                            </div>
+                            <div class="history-proj btc">
+                                <div class="history-proj-label">BTC Hoje</div>
+                                <div class="history-proj-value">R$ 362,50</div>
+                                <div class="history-proj-gain gain-positive">▲ +3,57%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-date">15/02/2026</span>
+                            <span class="history-amount">R$ 1.200,00</span>
+                        </div>
+                        <div class="history-projections">
+                            <div class="history-proj rf">
+                                <div class="history-proj-label">RF Hoje</div>
+                                <div class="history-proj-value">R$ 1.204,80</div>
+                                <div class="history-proj-gain gain-positive">▲ +0,40%</div>
+                            </div>
+                            <div class="history-proj btc">
+                                <div class="history-proj-label">BTC Hoje</div>
+                                <div class="history-proj-value">R$ 1.285,00</div>
+                                <div class="history-proj-gain gain-positive">▲ +7,08%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-date">03/02/2026</span>
+                            <span class="history-amount">R$ 1.800,00</span>
+                        </div>
+                        <div class="history-projections">
+                            <div class="history-proj rf">
+                                <div class="history-proj-label">RF Hoje</div>
+                                <div class="history-proj-value">R$ 1.812,30</div>
+                                <div class="history-proj-gain gain-positive">▲ +0,68%</div>
+                            </div>
+                            <div class="history-proj btc">
+                                <div class="history-proj-label">BTC Hoje</div>
+                                <div class="history-proj-value">R$ 1.745,00</div>
+                                <div class="history-proj-gain gain-negative">▼ -3,06%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-date">15/01/2026</span>
+                            <span class="history-amount">R$ 2.500,00</span>
+                        </div>
+                        <div class="history-projections">
+                            <div class="history-proj rf">
+                                <div class="history-proj-label">RF Hoje</div>
+                                <div class="history-proj-value">R$ 2.531,50</div>
+                                <div class="history-proj-gain gain-positive">▲ +1,26%</div>
+                            </div>
+                            <div class="history-proj btc">
+                                <div class="history-proj-label">BTC Hoje</div>
+                                <div class="history-proj-value">R$ 2.870,00</div>
+                                <div class="history-proj-gain gain-positive">▲ +14,80%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example with loss in both -->
+                    <div class="history-item">
+                        <div class="history-item-header">
+                            <span class="history-date">22/12/2025</span>
+                            <span class="history-amount">R$ 1.500,00</span>
+                        </div>
+                        <div class="history-projections">
+                            <div class="history-proj rf">
+                                <div class="history-proj-label">RF Hoje</div>
+                                <div class="history-proj-value">R$ 1.530,80</div>
+                                <div class="history-proj-gain gain-positive">▲ +2,05%</div>
+                            </div>
+                            <div class="history-proj btc">
+                                <div class="history-proj-label">BTC Hoje</div>
+                                <div class="history-proj-value">R$ 1.820,40</div>
+                                <div class="history-proj-gain gain-positive">▲ +21,36%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="height: 20px;"></div>
+            </div>
+        </div>
+
+        <!-- Fixed Save Button (only visible on Simulator tab) -->
+        <div class="save-button-wrapper" id="phone1-save-wrapper">
+            <button class="save-button" onclick="showToast('phone1')">
+                <span class="btn-icon">✓</span>
+                Resolvi Economizar
+            </button>
+        </div>
+
+        <!-- Toast -->
+        <div class="toast" id="phone1-toast">✅ Economia registrada com sucesso!</div>
+    </div>
+
+    <!-- ==================== ANNOTATIONS PANEL ==================== -->
+    <div class="annotations">
+        <h3>🎨 Design System</h3>
+        <ul>
+            <li><span class="color-sample" style="background:#0a0a0f;border:1px solid #2a2a3a;"></span> Background:
+                #0a0a0f</li>
+            <li><span class="color-sample" style="background:#12121e;border:1px solid #2a2a3a;"></span> Cards: #12121e
+            </li>
+            <li><span class="color-sample" style="background:#ffffff;"></span> Texto principal: #FFFFFF</li>
+            <li><span class="color-sample" style="background:#a0a0b8;"></span> Texto secundário: #A0A0B8</li>
+            <li><span class="color-sample" style="background:#00d68f;"></span> Positivo/Lucro: #00D68F</li>
+            <li><span class="color-sample" style="background:#ff4757;"></span> Negativo/Perda: #FF4757</li>
+            <li><span class="color-sample" style="background:#f7931a;"></span> Bitcoin: #F7931A</li>
+            <li><span class="color-sample" style="background:#6c5ce7;"></span> Accent/SELIC: #6C5CE7</li>
+        </ul>
+        <hr style="border-color:#2a2a3a;margin:12px 0;">
+        <h3>📝 Regras de Cor</h3>
+        <p style="margin-bottom:8px;">✅ <strong style="color:#00d68f;">Verde</strong> → Qualquer valor positivo, lucro,
+            crescimento, ganho</p>
+        <p style="margin-bottom:8px;">❌ <strong style="color:#ff4757;">Vermelho</strong> → Qualquer perda, prejuízo,
+            queda (veja item 03/02 no histórico)</p>
+        <p style="margin-bottom:8px;">🟠 <strong style="color:#f7931a;">Laranja</strong> → Exclusivo Bitcoin (identidade
+            visual)</p>
+        <p style="margin-bottom:8px;">🟣 <strong style="color:#6c5ce7;">Roxo</strong> → Accent (tabs, SELIC, destaques)
+        </p>
+        <hr style="border-color:#2a2a3a;margin:12px 0;">
+        <h3>💡 Instruções</h3>
+        <p>Clique nas abas para alternar entre Simulador, Resumo e Histórico. Clique em "Resolvi Economizar" para ver o
+            toast.
+        </p>
+        <p style="margin-top:8px;color:#555570;font-size:11px;">Protótipo HTML — não é código final.</p>
+    </div>
+
+    <script>
+        function switchTab(phoneId, tabName) {
+            const phone = document.getElementById(phoneId);
+            const tabs = phone.querySelectorAll('.top-tab');
+            const screens = phone.querySelectorAll('.screen');
+
+            tabs.forEach(t => t.classList.remove('active'));
+            screens.forEach(s => s.classList.remove('active'));
+
+            const tabMap = { 'simulator': 0, 'resumo': 1, 'history': 2 };
+            const idx = tabMap[tabName] ?? 0;
+            tabs[idx].classList.add('active');
+            phone.querySelector(`#${phoneId}-${tabName}`).classList.add('active');
+
+            // Show/hide fixed save button (only on simulator)
+            const saveWrapper = phone.querySelector(`#${phoneId}-save-wrapper`);
+            if (saveWrapper) {
+                saveWrapper.style.display = tabName === 'simulator' ? 'block' : 'none';
+            }
+
+            // Scroll to top
+            phone.querySelector('.screen-content').scrollTop = 0;
+        }
+
+        function showToast(phoneId) {
+            const toast = document.getElementById(`${phoneId}-toast`);
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 2000);
+        }
+    </script>
+
+</body>
+
+</html>
