@@ -8,6 +8,7 @@ import { refreshMarketData } from '@/services/initService';
 import { useMarketStore } from '@/stores/useMarketStore';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useSavingsStore } from '@/stores/useSavingsStore';
+import { useAppStore } from '@/stores/useAppStore';
 import { useCurrencyInput } from '@/hooks/useCurrencyInput';
 import { useProjections } from '@/hooks/useProjections';
 import { validateSaving, buildNewSaving } from '@/rules/savingsRules';
@@ -21,6 +22,7 @@ import DisclaimerText from '@/components/composed/DisclaimerText';
 import AttributionFooter from '@/components/composed/AttributionFooter';
 import SaveButton from '@/components/composed/SaveButton';
 import SaveModal from '@/components/composed/SaveModal';
+import DataSourceBadge from '@/components/composed/DataSourceBadge';
 
 function SimulatorScreen() {
     // ── Stores ──
@@ -29,9 +31,11 @@ function SimulatorScreen() {
     const cagr1y = useMarketStore((s) => s.cagr1y);
     const cagr5y = useMarketStore((s) => s.cagr5y);
     const cagr10y = useMarketStore((s) => s.cagr10y);
+    const lastFetchDate = useMarketStore((s) => s.lastFetchDate);
     const fixedRate = useConfigStore((s) => s.fixedRate);
     const setFixedRate = useConfigStore((s) => s.setFixedRate);
     const addSaving = useSavingsStore((s) => s.addSaving);
+    const dataSource = useAppStore((s) => s.dataSource);
 
     // ── State local ──
     const [modalVisible, setModalVisible] = useState(false);
@@ -159,6 +163,9 @@ function SimulatorScreen() {
 
                 {/* Market Chips */}
                 <MarketChips btcPrice={btcPrice} selicRate={selicRate} />
+
+                {/* Badge de fonte dos dados */}
+                <DataSourceBadge dataSource={dataSource} lastFetchDate={lastFetchDate} />
 
                 {/* Projeções */}
                 {numericValue > 0 && (

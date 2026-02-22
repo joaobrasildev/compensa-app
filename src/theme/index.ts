@@ -220,6 +220,13 @@ export const sizes = {
     dicaHeaderIconSize: 36,
     dicaHeaderTitleSize: 20,
 
+    // Data Source Badge
+    dsBadgePaddingV: 6,
+    dsBadgePaddingH: 10,
+    dsBadgeRadius: 8,
+    dsBadgeFontSize: 11,
+    dsBadgeIconSize: 13,
+
     // Chart (gráfico de barras empilhadas)
     chartHeight: 160,
     chartBarWidth: 28,
