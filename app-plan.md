@@ -23,7 +23,7 @@ O arquivo `prototype/index.html` é o protótipo visual validado do app. **Consu
 | react-native-screens | última |
 | react-native-safe-area-context | última |
 | zustand | 5.x |
-| react-native-chart-kit ou victory-native | última estável |
+| react-native-svg | última estável |
 | expo-linear-gradient | última |
 
 **Build:** EAS Build + EAS Submit.
@@ -91,6 +91,9 @@ src/
 │   ├── disciplineRules.ts
 │   └── formatRules.ts
 │
+├── constants/
+│   └── fallbackMarketData.ts    # Dados de mercado embutidos no build (fallback offline)
+│
 ├── services/
 │   ├── bitcoinService.ts
 │   ├── selicService.ts
@@ -111,6 +114,10 @@ src/
 │   └── debounce.ts
 │
 └── App.tsx
+
+# Na raiz do projeto (fora de src/):
+scripts/
+└── fetch-fallback-data.js        # Pre-build: gera fallbackMarketData.ts com dados de mercado atuais
 ```
 
 **Path alias:** `@/*` → `src/*` (configurar em `tsconfig.json`).
@@ -207,6 +214,9 @@ export const sizes = {
   dicaTitleSize: 15, dicaBodySize: 13,
   dicaHighlightSize: 12, dicaHighlightPadV: 6, dicaHighlightPadH: 12, dicaHighlightRadius: 8,
   dicaHeaderIconSize: 36, dicaHeaderTitleSize: 20,
+  // Chart (gráfico de barras empilhadas)
+  chartHeight: 160, chartBarWidth: 28, chartBarRadius: 4,
+  chartLabelSize: 9, chartYLabelSize: 9, chartYLabelWidth: 48, chartMaxMonths: 6,
 } as const;
 
 export const spacing = {
@@ -385,7 +395,7 @@ Top 5 maiores por `amount` DESC. Cada item: badge numérico + valor + data + des
 ```typescript
 type Props = { chartData: ChartDataPoint[]; };
 ```
-Line chart RF (verde) vs BTC (laranja) ao longo do tempo.
+Gráfico de barras empilhadas (stacked bar chart) usando `react-native-svg` (Svg, Rect, Text, Line). Cada barra representa um mês, com segmento verde (RF) na base e laranja (BTC) no topo. Últimos 6 meses. `ChartDataPoint = { month, label, rfAmount, btcAmount, total }`.
 
 ### `HistoryItem`
 ```typescript
@@ -573,14 +583,21 @@ type ConfigState = {
 
 ### `useAppStore`
 ```typescript
+type DataSource = 'live' | 'cache' | 'fallback';
+
 type AppState = {
   isReady: boolean;
   isLoading: boolean;
   error: string | null;
   hasCache: boolean;
+  dataSource: DataSource;
+  legalVisible: boolean;
   setReady: () => void;
   setLoading: (v: boolean) => void;
   setError: (msg: string | null) => void;
+  setHasCache: (v: boolean) => void;
+  setDataSource: (source: DataSource) => void;
+  setLegalVisible: (v: boolean) => void;
 };
 ```
 
@@ -653,7 +670,9 @@ enrichWithProjections(savings[], currentFixedRate, currentBtcPrice): EnrichedSav
 
 calculateTotals(savings[], currentFixedRate, currentBtcPrice): SummaryTotals
 
-buildChartData(savings[], currentFixedRate, currentBtcPrice): ChartDataPoint[]
+buildChartData(savings[]): ChartDataPoint[]
+// Agrupa savings por mês (YYYY-MM), soma rfAmount e btcAmount por tipo de investimento.
+// Retorna últimos 6 meses. Não precisa de dados de mercado.
 ```
 
 ### `disciplineRules.ts`
@@ -730,12 +749,14 @@ async function initializeApp(): Promise<void> {
   // 2. configRepo.get('fixedRate') → configStore (default 12.5)
   // 3. savingsRepo.getAll() → savingsStore
   // 4. fetch paralelo: bitcoinService + selicService
-  //    Sucesso → salva cache + marketStore
-  //    Falha + cache → carrega cache + marketStore (mostra badge "dados de [data]")
-  //    Falha + sem cache → appStore.setError("Conecte à internet...")
+  //    Sucesso → salva cache + marketStore + dataSource='live'
+  //    Falha + cache → carrega cache + marketStore + dataSource='cache'
+  //    Falha + sem cache → FALLBACK_MARKET_DATA → marketStore + dataSource='fallback'
   // 5. appStore.setReady()
 }
 ```
+
+O app **nunca** mostra erro fatal por falta de dados de mercado — o fallback embutido (gerado por `scripts/fetch-fallback-data.js` no prebuild) garante funcionamento offline.
 
 **Política de cache:** Fetch 1× por sessão (app open). Pull-to-refresh para forçar. Sem polling.
 
@@ -847,7 +868,7 @@ Debounce de 300ms no input de valor antes de recalcular projeções.
 
 **Cálculos memoizados:**
 - `enrichedSavings = savingsRules.enrichWithProjections(savings, fixedRate, btcPrice)`
-- `chartData = savingsRules.buildChartData(savings, fixedRate, btcPrice)`
+- `chartData = savingsRules.buildChartData(savings)`
 
 **State local:**
 ```typescript
@@ -857,7 +878,7 @@ const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 
 **Layout:**
 1. `SectionTitle` "📊 CRESCIMENTO"
-2. `GrowthChart` (chartData) — line chart RF (verde) vs BTC (laranja)
+2. `GrowthChart` (chartData) — gráfico de barras empilhadas RF (verde) vs BTC (laranja) por mês
 3. `SectionTitle` "HISTÓRICO"
 4. `HistoryList` (enrichedSavings, onDeleteRequest) — FlatList de HistoryItems com swipe-to-delete
 5. `EmptyState` quando vazio
@@ -928,13 +949,13 @@ App.tsx → LoadingOverlay visível
     2. configRepo.get('fixedRate') → configStore (default 12.5)
     3. savingsRepo.getAll() → savingsStore
     4. fetch paralelo bitcoinService + selicService
-       - Sucesso → cacheRepo.set() + marketStore
-       - Falha + cache → cacheRepo.get() + marketStore + badge "dados de [data]"
-       - Falha + sem cache → appStore.setError("Conecte à internet para carregar dados de mercado")
+       - Sucesso → cacheRepo.set() + marketStore + dataSource='live'
+       - Falha + cache → cacheRepo.get() + marketStore + dataSource='cache'
+       - Falha + sem cache → FALLBACK_MARKET_DATA → marketStore + dataSource='fallback'
     5. appStore.setReady() → remove loading → TopTabNavigator
 ```
 
-O app NUNCA trava por falta de conexão se tiver cache.
+O app NUNCA trava por falta de conexão. O fallback embutido garante funcionamento offline total.
 
 ---
 
@@ -1002,10 +1023,11 @@ O app NUNCA trava por falta de conexão se tiver cache.
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "scheme": "compensa",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0a0a0f"
+      "backgroundColor": "#000000"
     },
     "ios": {
       "bundleIdentifier": "com.compensaapp.compensa",
@@ -1022,7 +1044,7 @@ O app NUNCA trava por falta de conexão se tiver cache.
       "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0a0a0f"
+        "backgroundColor": "#000000"
       },
       "permissions": []
     },
