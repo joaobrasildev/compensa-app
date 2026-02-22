@@ -39,7 +39,7 @@ export async function initializeApp(): Promise<void> {
         useSavingsStore.getState().loadSavings();
 
         // 4. Fetch paralelo: BTC + SELIC
-        await fetchMarketData();
+        await refreshMarketData();
 
         // 5. Marca como pronto
         setReady();
@@ -54,7 +54,7 @@ export async function initializeApp(): Promise<void> {
     }
 }
 
-async function fetchMarketData(): Promise<void> {
+export async function refreshMarketData(): Promise<void> {
     const { setHasCache, setError } = useAppStore.getState();
     const { setMarketData } = useMarketStore.getState();
 

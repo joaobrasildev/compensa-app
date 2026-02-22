@@ -2,8 +2,9 @@
 // Tela principal do simulador — seção 11.1 do plano
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
+import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { colors, sizes, spacing, fonts } from '@/theme';
+import { refreshMarketData } from '@/services/initService';
 import { useMarketStore } from '@/stores/useMarketStore';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useSavingsStore } from '@/stores/useSavingsStore';
@@ -34,6 +35,7 @@ function SimulatorScreen() {
 
     // ── State local ──
     const [modalVisible, setModalVisible] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const { displayValue, numericValue, onChangeText, reset } = useCurrencyInput(300);
 
     // Taxa como string para o input
@@ -56,6 +58,12 @@ function SimulatorScreen() {
     });
 
     // ── Callbacks ──
+    const handleRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await refreshMarketData();
+        setRefreshing(false);
+    }, []);
+
     const handleRateChange = useCallback(
         (text: string) => {
             setRateInput(text);
@@ -110,6 +118,14 @@ function SimulatorScreen() {
                 contentContainerStyle={styles.scrollContent}
                 showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={handleRefresh}
+                        tintColor={colors.accent}
+                        colors={[colors.accent]}
+                    />
+                }
             >
                 {/* Hero */}
                 <View style={styles.hero} accessible accessibilityRole="header">
