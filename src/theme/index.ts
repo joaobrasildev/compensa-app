@@ -219,6 +219,15 @@ export const sizes = {
     dicaHighlightRadius: 8,
     dicaHeaderIconSize: 36,
     dicaHeaderTitleSize: 20,
+
+    // Chart (gráfico de barras empilhadas)
+    chartHeight: 160,
+    chartBarWidth: 28,
+    chartBarRadius: 4,
+    chartLabelSize: 9,
+    chartYLabelSize: 9,
+    chartYLabelWidth: 48,
+    chartMaxMonths: 6,
 } as const;
 
 export const spacing = {

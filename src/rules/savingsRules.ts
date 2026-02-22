@@ -146,31 +146,47 @@ export function calculateTotals(
     };
 }
 
-/** Constrói dados para gráfico de crescimento acumulado */
-export function buildChartData(
-    savings: Saving[],
-    currentFixedRate: number,
-    currentBtcPrice: number,
-): ChartDataPoint[] {
+const MONTH_LABELS = [
+    'jan', 'fev', 'mar', 'abr', 'mai', 'jun',
+    'jul', 'ago', 'set', 'out', 'nov', 'dez',
+] as const;
+
+const MAX_CHART_MONTHS = 6;
+
+/** Constrói dados para gráfico de barras empilhadas agrupado por mês (últimos 6 meses) */
+export function buildChartData(savings: Saving[]): ChartDataPoint[] {
     if (savings.length === 0) return [];
 
-    // Ordena por data crescente
-    const sorted = [...savings].sort(
-        (a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
-    );
+    // Agrupa por YYYY-MM
+    const monthMap = new Map<string, { rf: number; btc: number }>();
 
-    let cumulativeRf = 0;
-    let cumulativeBtc = 0;
+    for (const s of savings) {
+        const monthKey = s.created_at.slice(0, 7); // 'YYYY-MM'
+        const entry = monthMap.get(monthKey) ?? { rf: 0, btc: 0 };
 
-    return sorted.map((s) => {
-        const savedAt = new Date(s.created_at);
-        cumulativeRf += calculateCurrentFixedValue(s.amount, currentFixedRate, savedAt);
-        cumulativeBtc += calculateCurrentBtcValue(s.btc_equivalent, currentBtcPrice);
+        if (s.investment_type === 'RF') {
+            entry.rf += s.amount;
+        } else {
+            entry.btc += s.amount;
+        }
+
+        monthMap.set(monthKey, entry);
+    }
+
+    // Ordena por mês crescente e pega últimos 6
+    const sortedKeys = [...monthMap.keys()].sort();
+    const recentKeys = sortedKeys.slice(-MAX_CHART_MONTHS);
+
+    return recentKeys.map((monthKey) => {
+        const entry = monthMap.get(monthKey)!;
+        const monthIndex = parseInt(monthKey.slice(5, 7), 10) - 1;
 
         return {
-            date: s.created_at.slice(0, 10), // YYYY-MM-DD
-            rfValue: cumulativeRf,
-            btcValue: cumulativeBtc,
+            month: monthKey,
+            label: MONTH_LABELS[monthIndex] ?? '',
+            rfAmount: entry.rf,
+            btcAmount: entry.btc,
+            total: entry.rf + entry.btc,
         };
     });
 }

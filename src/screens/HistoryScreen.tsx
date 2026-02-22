@@ -32,8 +32,8 @@ function HistoryScreen() {
     );
 
     const chartData = useMemo(
-        () => buildChartData(savings, fixedRate, btcPrice),
-        [savings, fixedRate, btcPrice],
+        () => buildChartData(savings),
+        [savings],
     );
 
     // ── Dados do item pendente de exclusão ──
@@ -63,10 +63,10 @@ function HistoryScreen() {
 
     return (
         <View style={styles.container}>
-            {/* Gráfico de crescimento */}
+            {/* Gráfico de valor economizado */}
             {chartData.length > 0 && (
                 <View style={styles.chartSection}>
-                    <SectionTitle title="📊 CRESCIMENTO" />
+                    <SectionTitle title="📊 VALOR ECONOMIZADO (MÊS A MÊS)" />
                     <GrowthChart chartData={chartData} />
                 </View>
             )}

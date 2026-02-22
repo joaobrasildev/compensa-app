@@ -21,9 +21,11 @@ export type CAGRs = {
     y10: number;
 };
 
-/** Dados para os pontos do gráfico de crescimento */
+/** Dados para barras empilhadas do gráfico de crescimento (agrupado por mês) */
 export type ChartDataPoint = {
-    date: string;
-    rfValue: number;
-    btcValue: number;
+    month: string;      // 'YYYY-MM'
+    label: string;      // 'jan', 'fev', ...
+    rfAmount: number;   // total aportado em RF no mês
+    btcAmount: number;  // total aportado em BTC no mês
+    total: number;      // rfAmount + btcAmount
 };
