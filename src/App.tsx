@@ -1,39 +1,100 @@
 // src/App.tsx
-// Entry point do Compensa App
-// Preparado para o boot flow (useInitApp → TopTabNavigator)
+// Entry point do Compensa App — boot flow (seção 12)
 
-import React from 'react';
-import { View, StyleSheet, StatusBar, Text, ActivityIndicator } from 'react-native';
-import { colors } from '@/theme';
+import React, { useCallback } from 'react';
+import { View, StyleSheet, StatusBar, Modal } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { colors, spacing, sizes } from '@/theme';
+import { useInitApp } from '@/hooks/useInitApp';
+import { useAppStore } from '@/stores/useAppStore';
+import TopTabNavigator from '@/navigation/TopTabNavigator';
+import LoadingOverlay from '@/components/base/LoadingOverlay';
+import AppText from '@/components/base/AppText';
+import AppButton from '@/components/base/AppButton';
+import LegalScreen from '@/screens/LegalScreen';
 
 /**
- * App.tsx — Entry point
- *
- * Boot flow (será implementado na Fase 4+):
+ * Boot flow:
  * 1. useInitApp() → abre SQLite, carrega config, fetch dados
  * 2. Enquanto loading → LoadingOverlay
  * 3. Se erro sem cache → tela de erro com retry
  * 4. Se pronto → TopTabNavigator (3 abas)
  */
 export default function App() {
-    // TODO Fase 4: const { isReady, isLoading, error } = useInitApp();
+    const { isReady, isLoading, error } = useInitApp();
+    const hasCache = useAppStore((s) => s.hasCache);
+    const legalVisible = useAppStore((s) => s.legalVisible);
+    const setLegalVisible = useAppStore((s) => s.setLegalVisible);
 
-    // Placeholder de loading enquanto as fases seguintes são implementadas
-    return (
-        <View style={styles.container}>
-            <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
-            <View style={styles.content}>
-                <Text style={styles.title}>Compensa</Text>
-                <Text style={styles.subtitle}>Simulador comportamental financeiro</Text>
-                <ActivityIndicator
-                    size="large"
-                    color={colors.accent}
-                    style={styles.loader}
-                />
-                <Text style={styles.status}>Setup completo ✅</Text>
-                <Text style={styles.hint}>Próximo: Fase 1 — Componentes Base</Text>
+    const handleRetry = useCallback(() => {
+        // Re-inicializa o app
+        const { setLoading, setError } = useAppStore.getState();
+        setLoading(true);
+        setError(null);
+        void import('@/services/initService').then((m) => m.initializeApp());
+    }, []);
+
+    const handleCloseLegal = useCallback(() => {
+        setLegalVisible(false);
+    }, [setLegalVisible]);
+
+    // ── Loading ──
+    if (isLoading) {
+        return (
+            <View style={styles.container}>
+                <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
+                <LoadingOverlay visible message="Carregando dados de mercado..." />
             </View>
-        </View>
+        );
+    }
+
+    // ── Erro sem cache ──
+    if (error != null && !hasCache) {
+        return (
+            <View style={styles.container}>
+                <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
+                <View style={styles.errorContainer}>
+                    <AppText style={styles.errorIcon}>⚠️</AppText>
+                    <AppText weight="bold" style={styles.errorTitle}>
+                        Sem conexão
+                    </AppText>
+                    <AppText variant="muted" align="center" style={styles.errorMessage}>
+                        {error}
+                    </AppText>
+                    <View style={styles.retryWrapper}>
+                        <AppButton
+                            label="TENTAR NOVAMENTE"
+                            icon="🔄"
+                            onPress={handleRetry}
+                            variant="primary"
+                        />
+                    </View>
+                </View>
+            </View>
+        );
+    }
+
+    // ── App pronto ──
+    return (
+        <SafeAreaProvider>
+            <NavigationContainer>
+                <SafeAreaView style={styles.container} edges={['top']}>
+                    <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
+                    <TopTabNavigator />
+
+                    {/* Modal Legal (full-screen) */}
+                    <Modal
+                        visible={legalVisible}
+                        animationType="slide"
+                        presentationStyle="fullScreen"
+                        onRequestClose={handleCloseLegal}
+                    >
+                        <LegalScreen onClose={handleCloseLegal} />
+                    </Modal>
+                </SafeAreaView>
+            </NavigationContainer>
+        </SafeAreaProvider>
     );
 }
 
@@ -42,34 +103,27 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: colors.bgPrimary,
     },
-    content: {
+    errorContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        paddingHorizontal: 24,
+        paddingHorizontal: spacing['4xl'],
     },
-    title: {
-        fontSize: 28,
-        fontWeight: '700',
+    errorIcon: {
+        fontSize: sizes.emptyIconSize,
+        marginBottom: spacing['2xl'],
+    },
+    errorTitle: {
+        fontSize: sizes.text2xl,
         color: colors.textPrimary,
-        marginBottom: 8,
+        marginBottom: spacing.md,
     },
-    subtitle: {
-        fontSize: 14,
-        color: colors.textSecondary,
-        marginBottom: 32,
+    errorMessage: {
+        fontSize: sizes.textMdPlus,
+        lineHeight: 22,
+        marginBottom: spacing['3xl'],
     },
-    loader: {
-        marginBottom: 24,
-    },
-    status: {
-        fontSize: 16,
-        color: colors.greenText,
-        fontWeight: '600',
-        marginBottom: 8,
-    },
-    hint: {
-        fontSize: 12,
-        color: colors.textMuted,
+    retryWrapper: {
+        width: '100%',
     },
 });

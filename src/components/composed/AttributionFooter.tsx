@@ -1,21 +1,18 @@
 // src/components/composed/AttributionFooter.tsx
-// src/components/composed/AttributionFooter.tsx
 // Footer com atribuição CoinGecko + BCB + link para Legal
 
 import React, { useCallback } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useAppStore } from '@/stores/useAppStore';
 import { sizes, spacing, colors } from '@/theme';
 import AppText from '@/components/base/AppText';
 
 function AttributionFooter() {
-    const navigation = useNavigation();
+    const setLegalVisible = useAppStore((s) => s.setLegalVisible);
 
     const handleLegalPress = useCallback(() => {
-        // Navega para a tela Legal quando disponível
-        // @ts-expect-error - tipo de navegação será configurado na Fase 6
-        navigation.navigate('Legal');
-    }, [navigation]);
+        setLegalVisible(true);
+    }, [setLegalVisible]);
 
     return (
         <View style={styles.container}>
