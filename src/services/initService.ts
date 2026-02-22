@@ -12,6 +12,7 @@ import { useConfigStore } from '@/stores/useConfigStore';
 import { useSavingsStore } from '@/stores/useSavingsStore';
 import { useMarketStore } from '@/stores/useMarketStore';
 import { FALLBACK_MARKET_DATA } from '@/constants/fallbackMarketData';
+//import { seedTestSavings } from '@/services/devSeed';
 import type { BtcData } from '@/types';
 
 const CACHE_KEY_BTC = 'btc_data';
@@ -27,6 +28,9 @@ export async function initializeApp(): Promise<void> {
     try {
         // 1. Abre SQLite + migrations
         getDatabase();
+
+        // ⚠️ TEMPORÁRIO — seed de teste (remover depois)
+        //seedTestSavings();
 
         // 2. Carrega config (fixedRate)
         useConfigStore.getState().loadConfig();
