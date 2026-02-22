@@ -60,6 +60,7 @@ function HistoryList({ savings, onDeleteRequest }: HistoryListProps) {
             renderItem={renderItem}
             contentContainerStyle={styles.list}
             showsVerticalScrollIndicator={false}
+            accessibilityRole="list"
             onScrollBeginDrag={() => {
                 if (openSwipeId !== null) {
                     setOpenSwipeId(null);

@@ -86,6 +86,7 @@ function GrowthChart({ chartData }: GrowthChartProps) {
         <View
             style={styles.container}
             accessible
+            accessibilityRole="image"
             accessibilityLabel="Gráfico de crescimento: linha verde para Renda Fixa, linha laranja para Bitcoin"
         >
             <LineChart

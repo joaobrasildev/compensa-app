@@ -86,7 +86,11 @@ function HistoryItem({
             onSwipeableOpen={handleSwipeableOpen}
             containerStyle={styles.wrapper}
         >
-            <View style={[styles.card, { borderLeftColor: borderColor }]}>
+            {/* accessibilityHint applied to the card View below for swipe discoverability */}
+            <View
+                style={[styles.card, { borderLeftColor: borderColor }]}
+                accessibilityHint="Deslize para a esquerda para excluir"
+            >
                 {/* Header: data + valor */}
                 <View style={styles.header}>
                     <AppText variant="muted" style={styles.date}>

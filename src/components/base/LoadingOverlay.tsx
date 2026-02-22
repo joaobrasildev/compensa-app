@@ -16,6 +16,7 @@ function LoadingOverlay({ visible, message }: LoadingOverlayProps) {
         <View
             style={styles.overlay}
             accessible
+            accessibilityRole="alert"
             accessibilityLabel={message ?? 'Carregando'}
         >
             <ActivityIndicator size="large" color={colors.accent} />

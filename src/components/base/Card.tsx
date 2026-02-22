@@ -11,7 +11,7 @@ type CardProps = {
 
 function Card({ children, style }: CardProps) {
     return (
-        <View style={[styles.card, style]}>
+        <View style={[styles.card, style]} accessible>
             {children}
         </View>
     );

@@ -327,4 +327,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LegalScreen;
+export default React.memo(LegalScreen);

@@ -112,7 +112,7 @@ function SimulatorScreen() {
                 keyboardShouldPersistTaps="handled"
             >
                 {/* Hero */}
-                <View style={styles.hero}>
+                <View style={styles.hero} accessible accessibilityRole="header">
                     <AppText weight="bold" style={styles.heroTitle}>
                         Quanto você gastaria?
                     </AppText>
