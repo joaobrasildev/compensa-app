@@ -41,4 +41,4 @@ O arquivo `prototype/index.html` é o protótipo visual validado. **Consulte-o p
 1. Leia `app-plan.md` para entender o escopo da fase solicitada.
 2. Verifique quais artefatos já existem (não reescreva o que já está pronto).
 3. Implemente seguindo fielmente as especificações do plano.
-4. Respeite as dependências entre fases (ex: Fase 4.1 deve ser executada antes da Fase 5).
+4. Respeite as dependências entre fases (ex: Fase 4.1 deve ser executada antes da Fase 5). Sempre me responsa em português

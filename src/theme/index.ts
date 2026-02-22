@@ -35,6 +35,10 @@ export const colors = {
     red: '#ff4757',
     redSoft: 'rgba(255, 71, 87, 0.12)',
     redText: '#ff6b7a',
+    redGlow: 'rgba(255, 71, 87, 0.5)',
+    redGlowSoft: 'rgba(255, 71, 87, 0.12)',
+    redGradientStart: '#ff4757',
+    redGradientEnd: '#d63041',
 
     // Orange (alertas)
     orange: '#ffa726',
@@ -172,6 +176,20 @@ export const sizes = {
     discEmojiSize: 20,
     discNumberSize: 15,
     discLabelSize: 9,
+
+    // Delete button (swipe actions)
+    deleteBtnSize: 46,
+    deleteBtnRadius: 12,
+    deleteBtnIconSize: 20,
+    swipeActionWidth: 72,
+    swipeThreshold: 50,
+
+    // Delete Confirmation Modal
+    deleteModalWidth: 0.85,
+    deleteModalMaxWidth: 320,
+    deleteModalIconSize: 40,
+    deleteModalTitleSize: 17,
+    deleteModalDetailSize: 12,
 
     // History Items
     histItemPaddingV: 10,

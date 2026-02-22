@@ -11,6 +11,7 @@ type SavingsState = {
     count: number;
     addSaving: (saving: NewSaving) => void;
     loadSavings: () => void;
+    deleteSaving: (id: number) => void;
 };
 
 export const useSavingsStore = create<SavingsState>()((set) => ({
@@ -28,6 +29,15 @@ export const useSavingsStore = create<SavingsState>()((set) => ({
     },
 
     loadSavings: () => {
+        const savings = savingsRepo.getAll();
+        const totalSaved = savingsRepo.getTotalAmount();
+        const count = savingsRepo.getCount();
+        set({ savings, totalSaved, count });
+    },
+
+    deleteSaving: (id) => {
+        savingsRepo.deleteById(id);
+        // Reload completo após deletar
         const savings = savingsRepo.getAll();
         const totalSaved = savingsRepo.getTotalAmount();
         const count = savingsRepo.getCount();
