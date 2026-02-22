@@ -11,6 +11,7 @@ import { useAppStore } from '@/stores/useAppStore';
 import { useConfigStore } from '@/stores/useConfigStore';
 import { useSavingsStore } from '@/stores/useSavingsStore';
 import { useMarketStore } from '@/stores/useMarketStore';
+import { FALLBACK_MARKET_DATA } from '@/constants/fallbackMarketData';
 import type { BtcData } from '@/types';
 
 const CACHE_KEY_BTC = 'btc_data';
@@ -75,6 +76,7 @@ async function fetchMarketData(): Promise<void> {
         });
 
         setHasCache(true);
+        useAppStore.getState().setDataSource('live');
     } catch {
         // Falha → tenta cache
         loadFromCache();
@@ -82,7 +84,7 @@ async function fetchMarketData(): Promise<void> {
 }
 
 function loadFromCache(): void {
-    const { setHasCache, setError } = useAppStore.getState();
+    const { setHasCache, setDataSource } = useAppStore.getState();
     const { setMarketData } = useMarketStore.getState();
 
     const btcCache = cacheRepo.get(CACHE_KEY_BTC);
@@ -102,9 +104,26 @@ function loadFromCache(): void {
         });
 
         setHasCache(true);
+        setDataSource('cache');
     } else {
-        // Sem cache → erro
-        setHasCache(false);
-        setError('Conecte à internet para carregar dados de mercado');
+        // Sem cache → usa fallback embutido no build
+        loadFromFallback();
     }
+}
+
+function loadFromFallback(): void {
+    const { setHasCache, setDataSource } = useAppStore.getState();
+    const { setMarketData } = useMarketStore.getState();
+
+    setMarketData({
+        btcPrice: FALLBACK_MARKET_DATA.btcPrice,
+        cagr1y: FALLBACK_MARKET_DATA.cagr1y,
+        cagr5y: FALLBACK_MARKET_DATA.cagr5y,
+        cagr10y: FALLBACK_MARKET_DATA.cagr10y,
+        selicRate: FALLBACK_MARKET_DATA.selicRate,
+        lastFetchDate: FALLBACK_MARKET_DATA.fetchedAt.slice(0, 10),
+    });
+
+    setHasCache(false);
+    setDataSource('fallback');
 }
