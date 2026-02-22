@@ -1670,6 +1670,148 @@
             animation: swipeDeleteOut 0.35s ease forwards;
             pointer-events: none;
         }
+
+        /* ========== DICAS (TIPS) SCREEN ========== */
+        .dicas-header {
+            text-align: center;
+            padding: 24px 16px 8px;
+        }
+
+        .dicas-header-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .dicas-header-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+
+        .dicas-header-subtitle {
+            font-size: 13px;
+            color: #a0a0b8;
+            line-height: 1.4;
+        }
+
+        .dicas-list {
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .dica-card {
+            background: #12121e;
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid #1e1e30;
+            transition: border-color 0.2s;
+        }
+
+        .dica-card:hover {
+            border-color: #2a2a3a;
+        }
+
+        .dica-card-top {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+
+        .dica-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .dica-icon-box.purple {
+            background: rgba(108, 92, 231, 0.15);
+        }
+
+        .dica-icon-box.green {
+            background: rgba(0, 214, 143, 0.15);
+        }
+
+        .dica-icon-box.orange {
+            background: rgba(247, 147, 26, 0.15);
+        }
+
+        .dica-icon-box.red {
+            background: rgba(255, 71, 87, 0.15);
+        }
+
+        .dica-icon-box.blue {
+            background: rgba(45, 152, 218, 0.15);
+        }
+
+        .dica-card-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+
+        .dica-card-body {
+            font-size: 13px;
+            color: #a0a0b8;
+            line-height: 1.55;
+        }
+
+        .dica-card-highlight {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .dica-card-highlight.purple {
+            background: rgba(108, 92, 231, 0.12);
+            color: #6c5ce7;
+        }
+
+        .dica-card-highlight.green {
+            background: rgba(0, 214, 143, 0.12);
+            color: #00d68f;
+        }
+
+        .dica-card-highlight.orange {
+            background: rgba(247, 147, 26, 0.12);
+            color: #f7931a;
+        }
+
+        .dica-card-highlight.red {
+            background: rgba(255, 71, 87, 0.12);
+            color: #ff4757;
+        }
+
+        .dica-card-highlight.blue {
+            background: rgba(45, 152, 218, 0.12);
+            color: #2d98da;
+        }
+
+        .dica-divider {
+            height: 1px;
+            background: #1e1e30;
+            margin: 4px 16px;
+        }
+
+        .dicas-footer {
+            text-align: center;
+            padding: 12px 24px 24px;
+            font-size: 11px;
+            color: #555570;
+            line-height: 1.5;
+        }
     </style>
 </head>
 
@@ -1688,6 +1830,7 @@
             <div class="top-tab active" onclick="switchTab('phone1', 'simulator')">Simulador</div>
             <div class="top-tab" onclick="switchTab('phone1', 'resumo')">Resumo</div>
             <div class="top-tab" onclick="switchTab('phone1', 'history')">Histórico</div>
+            <div class="top-tab" onclick="switchTab('phone1', 'dicas')">Dicas</div>
         </div>
 
         <div class="screen-content">
@@ -2089,6 +2232,118 @@
 
                 <div style="height: 20px;"></div>
             </div>
+
+            <!-- ===== DICAS (TIPS) SCREEN ===== -->
+            <div class="screen" id="phone1-dicas">
+
+                <div class="dicas-header">
+                    <div class="dicas-header-icon">💡</div>
+                    <div class="dicas-header-title">Dicas Financeiras</div>
+                    <div class="dicas-header-subtitle">Pequenas mudanças de hábito que fazem grande diferença no longo
+                        prazo</div>
+                </div>
+
+                <div class="dicas-list">
+
+                    <!-- Dica 1 — Regra dos 72h -->
+                    <div class="dica-card">
+                        <div class="dica-card-top">
+                            <div class="dica-icon-box purple">🧠</div>
+                            <div class="dica-card-title">Regra dos 72 horas</div>
+                        </div>
+                        <div class="dica-card-body">
+                            Antes de qualquer compra acima de R$ 100, espere 72 horas.
+                            A maioria dos impulsos desaparece nesse período.
+                            Se após 3 dias você ainda quiser, provavelmente é uma necessidade real.
+                            <div class="dica-card-highlight purple">⏱️ 72h de reflexão = decisões melhores</div>
+                        </div>
+                    </div>
+
+                    <!-- Dica 2 — Custo de oportunidade -->
+                    <div class="dica-card">
+                        <div class="dica-card-top">
+                            <div class="dica-icon-box green">💰</div>
+                            <div class="dica-card-title">Custo de oportunidade</div>
+                        </div>
+                        <div class="dica-card-body">
+                            Cada real gasto é um real que não será investido.
+                            Um café de R$ 15/dia = R$ 450/mês. Investidos a 12% a.a.,
+                            seriam <strong style="color:#00d68f;">R$ 8.500+</strong> em 1 ano.
+                            Pense no que seu dinheiro pode render antes de gastar.
+                            <div class="dica-card-highlight green">📈 Use o Simulador para ver na prática</div>
+                        </div>
+                    </div>
+
+                    <!-- Dica 3 — Juros compostos -->
+                    <div class="dica-card">
+                        <div class="dica-card-top">
+                            <div class="dica-icon-box orange">📊</div>
+                            <div class="dica-card-title">O poder dos juros compostos</div>
+                        </div>
+                        <div class="dica-card-body">
+                            Einstein chamou os juros compostos de "a oitava maravilha do mundo".
+                            Seu dinheiro trabalha por você 24h/dia.
+                            R$ 1.000 a 12% a.a. viram R$ 1.762 em 5 anos
+                            e <strong style="color:#f7931a;">R$ 3.106 em 10 anos</strong> — sem aportar mais nada.
+                            <div class="dica-card-highlight orange">🔄 Quanto antes começar, maior o efeito</div>
+                        </div>
+                    </div>
+
+                    <!-- Dica 4 — Meta visual -->
+                    <div class="dica-card">
+                        <div class="dica-card-top">
+                            <div class="dica-icon-box blue">🎯</div>
+                            <div class="dica-card-title">Tenha uma meta visual</div>
+                        </div>
+                        <div class="dica-card-body">
+                            Defina um objetivo concreto: viagem, entrada de um imóvel, reserva de emergência.
+                            Coloque uma imagem como wallpaper do celular.
+                            Toda vez que for comprar por impulso, olhe a tela —
+                            isso ativa a parte racional do cérebro.
+                            <div class="dica-card-highlight blue">🖼️ Meta visível = motivação constante</div>
+                        </div>
+                    </div>
+
+                    <!-- Dica 5 — Gatilhos de consumo -->
+                    <div class="dica-card">
+                        <div class="dica-card-top">
+                            <div class="dica-icon-box red">⚠️</div>
+                            <div class="dica-card-title">Conheça seus gatilhos</div>
+                        </div>
+                        <div class="dica-card-body">
+                            Compras impulsivas geralmente são ativadas por emoções:
+                            tédio, ansiedade, redes sociais, promoções "imperdíveis".
+                            Identifique seus gatilhos e crie barreiras:
+                            desative notificações de lojas, remova cartões salvos,
+                            cancele newsletters de ofertas.
+                            <div class="dica-card-highlight red">🛡️ Menos tentação = mais economia</div>
+                        </div>
+                    </div>
+
+                    <!-- Dica 6 — Regra 50-30-20 -->
+                    <div class="dica-card">
+                        <div class="dica-card-top">
+                            <div class="dica-icon-box purple">📋</div>
+                            <div class="dica-card-title">Regra 50-30-20</div>
+                        </div>
+                        <div class="dica-card-body">
+                            Divida sua renda: <strong style="color:#ffffff;">50%</strong> para necessidades (aluguel,
+                            comida),
+                            <strong style="color:#6c5ce7;">30%</strong> para desejos (lazer, compras) e
+                            <strong style="color:#00d68f;">20%</strong> para investimentos e reserva.
+                            Mesmo que não siga à risca, ter uma proporção ajuda a criar consciência.
+                            <div class="dica-card-highlight purple">💡 Organize antes de gastar</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="dicas-footer">
+                    Dicas educativas — não constituem recomendação de investimento.
+                </div>
+
+                <div style="height: 20px;"></div>
+            </div>
         </div>
 
         <!-- Fixed Save Button (only visible on Simulator tab) -->
@@ -2184,7 +2439,8 @@
         </p>
         <hr style="border-color:#2a2a3a;margin:12px 0;">
         <h3>💡 Instruções</h3>
-        <p>Clique nas abas para alternar entre Simulador, Resumo e Histórico. Clique em "Resolvi Economizar" para ver o
+        <p>Clique nas abas para alternar entre Simulador, Resumo, Histórico e Dicas. Clique em "Resolvi Economizar" para
+            ver o
             toast.
         </p>
         <p style="margin-top:8px;color:#555570;font-size:11px;">Protótipo HTML — não é código final.</p>
@@ -2232,7 +2488,7 @@
             tabs.forEach(t => t.classList.remove('active'));
             screens.forEach(s => s.classList.remove('active'));
 
-            const tabMap = { 'simulator': 0, 'resumo': 1, 'history': 2 };
+            const tabMap = { 'simulator': 0, 'resumo': 1, 'history': 2, 'dicas': 3 };
             const idx = tabMap[tabName] ?? 0;
             tabs[idx].classList.add('active');
             phone.querySelector(`#${phoneId}-${tabName}`).classList.add('active');
