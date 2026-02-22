@@ -3,12 +3,12 @@
 // Bottom-sheet modal para registrar economia
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
-import { colors, sizes, spacing, borderWidths, fonts, radii } from '@/theme';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { colors, sizes, spacing, borderWidths, fonts, radii, letterSpacings, opacity as opacityTokens } from '@/theme';
 import AppModal from '@/components/base/AppModal';
 import AppText from '@/components/base/AppText';
 import AppTextInput from '@/components/base/AppTextInput';
-import AppButton from '@/components/base/AppButton';
 import RadioOption from '@/components/base/RadioOption';
 import { formatBRL } from '@/rules/formatRules';
 import { capitalizeFirst } from '@/rules/savingsRules';
@@ -107,15 +107,42 @@ function SaveModal({
                 />
             </View>
 
-            {/* Botão confirmar */}
-            <View style={styles.confirmWrapper}>
-                <AppButton
-                    label="CONFIRMAR"
-                    icon="✅"
+            {/* Botões */}
+            <View style={styles.buttons}>
+                {/* Cancelar */}
+                <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={onClose}
+                    activeOpacity={0.8}
+                    accessibilityRole="button"
+                    accessibilityLabel="Cancelar registro"
+                >
+                    <AppText weight="bold" style={styles.cancelText}>
+                        CANCELAR
+                    </AppText>
+                </TouchableOpacity>
+
+                {/* OK */}
+                <TouchableOpacity
                     onPress={handleConfirm}
-                    variant="confirm"
                     disabled={isDisabled}
-                />
+                    activeOpacity={0.8}
+                    accessibilityRole="button"
+                    accessibilityLabel="Confirmar registro de economia"
+                    accessibilityState={{ disabled: isDisabled }}
+                    style={[styles.okTouchable, isDisabled && styles.disabled]}
+                >
+                    <LinearGradient
+                        colors={[colors.greenGradientStart, colors.greenGradientEnd]}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.okButton}
+                    >
+                        <AppText weight="bold" style={styles.okText}>
+                            OK
+                        </AppText>
+                    </LinearGradient>
+                </TouchableOpacity>
             </View>
         </AppModal>
     );
@@ -137,8 +164,53 @@ const styles = StyleSheet.create({
         gap: spacing.md,
         marginBottom: spacing['2xl'],
     },
-    confirmWrapper: {
+    buttons: {
+        flexDirection: 'row',
+        gap: spacing.lg,
+        width: '100%',
         marginTop: spacing.sm,
+    },
+    cancelButton: {
+        flex: 1,
+        backgroundColor: colors.bgCardHover,
+        borderWidth: borderWidths.medium,
+        borderColor: colors.border,
+        borderRadius: sizes.btnBorderRadius,
+        paddingVertical: sizes.btnPaddingV,
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: sizes.minTouchTarget,
+    },
+    cancelText: {
+        fontSize: sizes.btnFontSize,
+        color: colors.textSecondary,
+        letterSpacing: letterSpacings.tight,
+    },
+    okTouchable: {
+        flex: 1,
+        minHeight: sizes.minTouchTarget,
+    },
+    okButton: {
+        flex: 1,
+        borderWidth: borderWidths.medium,
+        borderColor: colors.greenGlow,
+        borderRadius: sizes.btnBorderRadius,
+        paddingVertical: sizes.btnPaddingV,
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: colors.greenGlowSoft,
+        shadowOffset: { width: 0, height: 0 },
+        shadowOpacity: 1,
+        shadowRadius: 20,
+        elevation: 4,
+    },
+    okText: {
+        fontSize: sizes.btnFontSize,
+        color: colors.black,
+        letterSpacing: letterSpacings.tight,
+    },
+    disabled: {
+        opacity: opacityTokens.disabled,
     },
 });
 

@@ -439,7 +439,9 @@ type Props = {
 4. Input "O que você deixou de comprar?" (maxLength: 40, obrigatório). A primeira letra da descrição é capitalizada automaticamente durante a digitação via `capitalizeFirst` de `savingsRules.ts` (apenas a primeira letra, não cada palavra).
 5. `RadioOption` "📊 Renda Fixa" (subtitle: "Taxa: {fixedRate}% a.a.") — pré-selecionado
 6. `RadioOption` "₿ Bitcoin" (subtitle: "BTC: R$ {btcPrice}")
-7. `AppButton` variant="confirm" "✅ CONFIRMAR" — disabled até descrição preenchida
+7. Dois botões lado a lado (mesmo padrão do `DeleteConfirmModal`):
+   - **CANCELAR** (esquerda): `bgCardHover` + borda `border` + texto `textSecondary`. Fecha o modal sem resetar os dados simulados na tela.
+   - **OK** (direita): `LinearGradient` verde (`greenGradientStart` → `greenGradientEnd`) + borda `greenGlow` + shadow `greenGlowSoft` + texto `black`. Disabled até descrição preenchida. Salva a economia ao confirmar.
 
 ### `DisclaimerText`
 ```typescript

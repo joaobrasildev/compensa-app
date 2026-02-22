@@ -30,6 +30,8 @@ export const colors = {
     greenText: '#00e69a',
     greenGlow: 'rgba(0, 214, 143, 0.35)',
     greenGlowSoft: 'rgba(0, 214, 143, 0.15)',
+    greenGradientStart: '#00d68f',
+    greenGradientEnd: '#00b377',
 
     // Red (negativo, perdas)
     red: '#ff4757',
