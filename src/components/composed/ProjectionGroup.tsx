@@ -12,7 +12,7 @@ type ProjectionGroupProps = {
     projections: Projection[];
 };
 
-const DISPLAY_ORDER = ['10y', '1y', '5y'] as const;
+const DISPLAY_ORDER = ['1y', '5y', '10y'] as const;
 
 function ProjectionGroup({ projections }: ProjectionGroupProps) {
     const ordered = useMemo(() => {

@@ -27,6 +27,10 @@ type HistoryItemProps = {
 const SWIPE_ACTION_WIDTH = sizes.swipeActionWidth;
 const SWIPE_THRESHOLD = sizes.swipeThreshold;
 
+/** Calcula % de ganho relativo ao valor original */
+const gainPercent = (projected: number, original: number): number =>
+    original > 0 ? ((projected - original) / original) * 100 : 0;
+
 function HistoryItem({
     saving,
     onDeleteRequest,
@@ -101,6 +105,11 @@ function HistoryItem({
 
     const isRF = saving.investment_type === 'RF';
     const borderColor = isRF ? colors.green : colors.btcOrange;
+
+    const hasSimulatedProjections =
+        saving.proj_1y_rf != null ||
+        saving.proj_5y_rf != null ||
+        saving.proj_10y_rf != null;
 
     return (
         <View style={styles.wrapper}>
@@ -190,6 +199,99 @@ function HistoryItem({
                             </View>
                         </View>
                     </View>
+
+                    {/* Projeção simulada (valores salvos no momento do registro) */}
+                    {hasSimulatedProjections && (
+                        <>
+                            <AppText variant="muted" weight="semibold" style={styles.simTitle}>
+                                PROJEÇÃO SIMULADA
+                            </AppText>
+
+                            {/* 1 ano */}
+                            {saving.proj_1y_rf != null && saving.proj_1y_btc != null && (
+                                <View style={styles.projections}>
+                                    <View style={styles.projCard}>
+                                        <AppText variant="muted" weight="semibold" style={styles.projLabel}>
+                                            RF 1 ano
+                                        </AppText>
+                                        <View style={styles.projValueRow}>
+                                            <AppText weight="bold" style={styles.projValue}>
+                                                {formatBRL(saving.proj_1y_rf)}
+                                            </AppText>
+                                            <Badge value={gainPercent(saving.proj_1y_rf, saving.amount)} size="sm" />
+                                        </View>
+                                    </View>
+                                    <View style={styles.projCard}>
+                                        <AppText variant="muted" weight="semibold" style={styles.projLabel}>
+                                            BTC 1 ano
+                                        </AppText>
+                                        <View style={styles.projValueRow}>
+                                            <AppText weight="bold" style={styles.projValue}>
+                                                {formatBRL(saving.proj_1y_btc)}
+                                            </AppText>
+                                            <Badge value={gainPercent(saving.proj_1y_btc, saving.amount)} size="sm" />
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+
+                            {/* 5 anos */}
+                            {saving.proj_5y_rf != null && saving.proj_5y_btc != null && (
+                                <View style={styles.projections}>
+                                    <View style={styles.projCard}>
+                                        <AppText variant="muted" weight="semibold" style={styles.projLabel}>
+                                            RF 5 anos
+                                        </AppText>
+                                        <View style={styles.projValueRow}>
+                                            <AppText weight="bold" style={styles.projValue}>
+                                                {formatBRL(saving.proj_5y_rf)}
+                                            </AppText>
+                                            <Badge value={gainPercent(saving.proj_5y_rf, saving.amount)} size="sm" />
+                                        </View>
+                                    </View>
+                                    <View style={styles.projCard}>
+                                        <AppText variant="muted" weight="semibold" style={styles.projLabel}>
+                                            BTC 5 anos
+                                        </AppText>
+                                        <View style={styles.projValueRow}>
+                                            <AppText weight="bold" style={styles.projValue}>
+                                                {formatBRL(saving.proj_5y_btc)}
+                                            </AppText>
+                                            <Badge value={gainPercent(saving.proj_5y_btc, saving.amount)} size="sm" />
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+
+                            {/* 10 anos */}
+                            {saving.proj_10y_rf != null && saving.proj_10y_btc != null && (
+                                <View style={styles.projections}>
+                                    <View style={styles.projCard}>
+                                        <AppText variant="muted" weight="semibold" style={styles.projLabel}>
+                                            RF 10 anos
+                                        </AppText>
+                                        <View style={styles.projValueRow}>
+                                            <AppText weight="bold" style={styles.projValue}>
+                                                {formatBRL(saving.proj_10y_rf)}
+                                            </AppText>
+                                            <Badge value={gainPercent(saving.proj_10y_rf, saving.amount)} size="sm" />
+                                        </View>
+                                    </View>
+                                    <View style={styles.projCard}>
+                                        <AppText variant="muted" weight="semibold" style={styles.projLabel}>
+                                            BTC 10 anos
+                                        </AppText>
+                                        <View style={styles.projValueRow}>
+                                            <AppText weight="bold" style={styles.projValue}>
+                                                {formatBRL(saving.proj_10y_btc)}
+                                            </AppText>
+                                            <Badge value={gainPercent(saving.proj_10y_btc, saving.amount)} size="sm" />
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+                        </>
+                    )}
                 </View>
             </Animated.View>
         </View>
@@ -275,9 +377,16 @@ const styles = StyleSheet.create({
         fontSize: sizes.textXs,
         letterSpacing: letterSpacings.tight,
     },
+    simTitle: {
+        fontSize: sizes.histProjLabelSize,
+        letterSpacing: letterSpacings.tight,
+        marginTop: spacing.lg,
+        marginBottom: spacing.sm,
+    },
     projections: {
         flexDirection: 'row',
         gap: spacing.md,
+        marginBottom: spacing.xs,
     },
     projCard: {
         flex: 1,
