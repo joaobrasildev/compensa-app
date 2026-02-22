@@ -68,7 +68,7 @@ function SummaryScreen() {
             {/* Top 5 */}
             {top5.length > 0 && (
                 <>
-                    <SectionTitle title="🥇 TOP 5 MAIORES" />
+                    <SectionTitle title="🥇 TOP 5 MAIORES ECONOMIAS" />
                     <RankingList items={top5} />
                 </>
             )}

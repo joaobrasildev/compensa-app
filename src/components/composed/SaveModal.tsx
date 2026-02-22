@@ -11,6 +11,7 @@ import AppTextInput from '@/components/base/AppTextInput';
 import AppButton from '@/components/base/AppButton';
 import RadioOption from '@/components/base/RadioOption';
 import { formatBRL } from '@/rules/formatRules';
+import { capitalizeFirst } from '@/rules/savingsRules';
 
 type SaveModalProps = {
     visible: boolean;
@@ -80,7 +81,7 @@ function SaveModal({
             <AppTextInput
                 label="O que você deixou de comprar?"
                 value={description}
-                onChangeText={setDescription}
+                onChangeText={(text: string) => setDescription(capitalizeFirst(text))}
                 keyboardType="default"
                 placeholder="Ex: Balada, Delivery, Impulso..."
                 maxLength={40}

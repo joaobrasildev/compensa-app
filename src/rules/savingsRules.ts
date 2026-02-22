@@ -16,6 +16,12 @@ import {
     calculateCurrentBtcValue,
 } from './projectionRules';
 
+/** Capitaliza apenas a primeira letra da string */
+export function capitalizeFirst(str: string): string {
+    if (str.length === 0) return str;
+    return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
 /** Valida dados antes de salvar */
 export function validateSaving(
     amount: number,
