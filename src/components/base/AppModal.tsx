@@ -2,6 +2,7 @@
 import React, { useEffect, useRef } from 'react';
 import {
     View,
+    ScrollView,
     TouchableWithoutFeedback,
     Animated,
     StyleSheet,
@@ -76,8 +77,9 @@ function AppModal({
             </TouchableWithoutFeedback>
 
             <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+                behavior="padding"
                 style={styles.keyboardView}
+                keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
             >
                 <Animated.View
                     style={[
@@ -98,7 +100,13 @@ function AppModal({
                         </AppText>
                     )}
 
-                    {children}
+                    <ScrollView
+                        bounces={false}
+                        showsVerticalScrollIndicator={false}
+                        keyboardShouldPersistTaps="handled"
+                    >
+                        {children}
+                    </ScrollView>
                 </Animated.View>
             </KeyboardAvoidingView>
         </View>

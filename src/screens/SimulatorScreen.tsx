@@ -1,7 +1,7 @@
 // src/screens/SimulatorScreen.tsx
 // Tela principal do simulador — seção 11.1 do plano
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { View, ScrollView, RefreshControl, StyleSheet } from 'react-native';
 import { colors, sizes, spacing, fonts } from '@/theme';
 import { refreshMarketData } from '@/services/initService';
@@ -46,6 +46,14 @@ function SimulatorScreen() {
     const [rateInput, setRateInput] = useState(() =>
         fixedRate.toFixed(2).replace('.', ','),
     );
+    const hasUserEditedRate = useRef(false);
+
+    // Sincroniza rateInput quando o store atualiza (ex: após fetch da SELIC)
+    useEffect(() => {
+        if (!hasUserEditedRate.current) {
+            setRateInput(fixedRate.toFixed(2).replace('.', ','));
+        }
+    }, [fixedRate]);
 
     // ── CAGRs memoizado ──
     const cagrs = useMemo<CAGRs>(
@@ -70,6 +78,7 @@ function SimulatorScreen() {
 
     const handleRateChange = useCallback(
         (text: string) => {
+            hasUserEditedRate.current = true;
             setRateInput(text);
             const cleaned = text.replace(',', '.');
             const parsed = parseFloat(cleaned);
