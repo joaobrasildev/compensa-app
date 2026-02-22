@@ -354,7 +354,7 @@ Card com período, linhas RF e BTC (valor + badge % + sub equivalente BTC).
 ```typescript
 type Props = { projections: Projection[]; };
 ```
-Renderiza 3 `ProjectionCard`. **Ordem de exibição: 10 anos (destaque), 1 ano, 5 anos.**
+Renderiza 3 `ProjectionCard`. **Ordem de exibição: 1 ano, 5 anos, 10 anos.**
 
 ### `SummaryCards`
 ```typescript
@@ -389,7 +389,7 @@ type Props = {
     onSwipeOpen: (id: number) => void;
 };
 ```
-Borda esquerda 3px colorida (verde RF, laranja BTC). Header: data + valor. Meta row: 🏷️ descrição + badge tipo. Body: 2 mini-cards lado a lado (RF HOJE + BTC HOJE) cada um com valor + badge %.
+Borda esquerda 3px colorida (verde RF, laranja BTC). Header: data absoluta (`formatDate`) + data relativa (`formatRelativeDate`) separadas por traço (ex: "21/02/2026 – Hoje") + valor. Meta row: 🏷️ descrição + badge tipo. Título "RENDIMENTO ATUAL" (variant muted, weight semibold) seguido de 2 mini-cards lado a lado (RF HOJE + BTC HOJE) cada um com valor + badge %. Seção "PROJEÇÃO SIMULADA" (condicional, exibida apenas se existirem projeções salvas): 3 linhas de 2 mini-cards (RF 1a/BTC 1a, RF 5a/BTC 5a, RF 10a/BTC 10a), cada um com valor formatado (`formatBRL`) + badge de ganho % calculado via `((proj - amount) / amount) * 100`. Cada par só é renderizado se ambos os valores (RF e BTC) forem não-nulos.
 **Swipe-to-delete:** Gesto de swipe para a esquerda revela botão 🗑️ com borda vermelha (ver Fase 4.1.3 para detalhes completos).
 
 ### `HistoryList`
@@ -436,7 +436,7 @@ type Props = {
 1. Handle bar
 2. Título: "💰 Registrar Economia" / "Transforme essa decisão em investimento"
 3. `AmountDisplay`: valor em destaque (somente leitura, greenText, fundo bgPrimary)
-4. Input "O que você deixou de comprar?" (maxLength: 40, obrigatório)
+4. Input "O que você deixou de comprar?" (maxLength: 40, obrigatório). A primeira letra da descrição é capitalizada automaticamente durante a digitação via `capitalizeFirst` de `savingsRules.ts` (apenas a primeira letra, não cada palavra).
 5. `RadioOption` "📊 Renda Fixa" (subtitle: "Taxa: {fixedRate}% a.a.") — pré-selecionado
 6. `RadioOption` "₿ Bitcoin" (subtitle: "BTC: R$ {btcPrice}")
 7. `AppButton` variant="confirm" "✅ CONFIRMAR" — disabled até descrição preenchida
@@ -635,6 +635,9 @@ type SummaryTotals = {
 validateSaving(amount, btcPrice, description, investmentType): { valid: boolean; error?: string }
 // amount > 0, btcPrice > 0, description.trim().length > 0, investmentType in ['RF','BTC']
 
+capitalizeFirst(str: string): string
+// Retorna a string com apenas a primeira letra em maiúscula (não capitaliza cada palavra).
+
 buildNewSaving(amount, description, investmentType, fixedRate, btcPrice, selicRate, cagrs): NewSaving
 
 enrichWithProjections(savings[], currentFixedRate, currentBtcPrice): EnrichedSaving[]
@@ -665,7 +668,7 @@ formatBRL(value: number): string          // "R$ 1.234,56"
 formatBTC(value: number): string          // "0,00182400 BTC"
 formatPercent(value: number): string      // "+12,5%" ou "-3,2%"
 formatDate(date: Date | string): string   // "21/02/2026"
-formatRelativeDate(date: Date | string): string  // "há 3 dias"
+formatRelativeDate(date: Date | string): string  // "Hoje", "Há 3 dias", "Há 2 semanas", "Há 1 mês", "Há 1 ano" (sem granularidade de minutos/horas; tudo < 1 dia = "Hoje")
 ```
 
 Implementar com `.toFixed()` + `.replace()` manual. Não depender 100% de `Intl.NumberFormat`.
@@ -781,7 +784,7 @@ const projections = useMemo(
 3. Input taxa (suffix "% a.a.", decimal-pad) — valor salvo em configStore
 4. `MarketChips` (btcPrice, selicRate)
 5. `SectionTitle` "PROJEÇÕES"
-6. `ProjectionGroup` (projections) — ordem: 10a, 1a, 5a
+6. `ProjectionGroup` (projections) — ordem: 1a, 5a, 10a
 7. `DisclaimerText` (compact=false)
 8. `AttributionFooter`
 9. `SaveButton` fixo no bottom (position absolute + LinearGradient fade)
