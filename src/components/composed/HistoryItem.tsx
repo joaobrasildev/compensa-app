@@ -173,6 +173,11 @@ function HistoryItem({
                         </View>
                     </View>
 
+                    {/* Título da seção de rendimento atual */}
+                    <AppText variant="muted" weight="semibold" style={styles.currentTitle}>
+                        RENDIMENTO ATUAL
+                    </AppText>
+
                     {/* Body: 2 mini-cards (RF HOJE + BTC HOJE) */}
                     <View style={styles.projections}>
                         <View style={styles.projCard}>
@@ -376,6 +381,11 @@ const styles = StyleSheet.create({
     typeText: {
         fontSize: sizes.textXs,
         letterSpacing: letterSpacings.tight,
+    },
+    currentTitle: {
+        fontSize: sizes.histProjLabelSize,
+        letterSpacing: letterSpacings.tight,
+        marginBottom: spacing.sm,
     },
     simTitle: {
         fontSize: sizes.histProjLabelSize,
