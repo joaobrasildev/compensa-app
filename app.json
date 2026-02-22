@@ -1,0 +1,46 @@
+{
+    "expo": {
+        "name": "Compensa",
+        "slug": "compensa-app",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "userInterfaceStyle": "dark",
+        "scheme": "compensa",
+        "newArchEnabled": true,
+        "splash": {
+            "image": "./assets/splash-icon.png",
+            "resizeMode": "contain",
+            "backgroundColor": "#0a0a0f"
+        },
+        "ios": {
+            "bundleIdentifier": "com.compensaapp.compensa",
+            "buildNumber": "1",
+            "supportsTablet": true,
+            "infoPlist": {
+                "ITSAppUsesNonExemptEncryption": false,
+                "CFBundleDevelopmentRegion": "pt-BR",
+                "CFBundleLocalizations": [
+                    "pt-BR"
+                ]
+            }
+        },
+        "android": {
+            "package": "com.compensaapp.compensa",
+            "versionCode": 1,
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#0a0a0f"
+            },
+            "permissions": []
+        },
+        "plugins": [
+            "expo-sqlite"
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "DEFINIR_APOS_CRIAR_PROJETO_NO_EAS"
+            }
+        }
+    }
+}

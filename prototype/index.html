@@ -738,6 +738,64 @@
             color: var(--green-text);
         }
 
+        .summary-breakdown {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--border);
+        }
+
+        .summary-breakdown-item {
+            flex: 1;
+        }
+
+        .summary-breakdown-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 2px;
+        }
+
+        .summary-breakdown-value {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .summary-breakdown-value.green {
+            color: var(--green-text);
+        }
+
+        .summary-breakdown-value.orange {
+            color: var(--btc-orange);
+        }
+
+        .summary-breakdown-detail {
+            font-size: 9px;
+            font-weight: 600;
+            margin-top: 1px;
+            color: var(--text-secondary);
+        }
+
+        .summary-type-indicator {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: middle;
+        }
+
+        .summary-type-indicator.rf {
+            background: var(--green);
+        }
+
+        .summary-type-indicator.btc {
+            background: var(--btc-orange);
+        }
+
         .summary-detail.orange {
             color: var(--btc-orange);
         }
@@ -839,6 +897,267 @@
             color: var(--text-muted);
         }
 
+        .ranking-desc {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 1px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .ranking-type-badge {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 1px 5px;
+            border-radius: 3px;
+            letter-spacing: 0.3px;
+        }
+
+        .ranking-type-badge.type-rf {
+            background: var(--green-soft);
+            color: var(--green);
+        }
+
+        .ranking-type-badge.type-btc {
+            background: var(--btc-soft);
+            color: var(--btc-orange);
+        }
+
+        /* ========== SAVE MODAL ========== */
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 20;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            padding: 24px 20px 20px;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: var(--border);
+            border-radius: 2px;
+            margin: 0 auto 16px;
+        }
+
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .modal-subtitle {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .modal-amount-display {
+            text-align: center;
+            padding: 10px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .modal-amount-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .modal-amount-value {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--green-text);
+        }
+
+        .modal-field-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .modal-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .modal-input:focus {
+            border-color: var(--border-focus);
+        }
+
+        .modal-radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .modal-radio-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            background: var(--bg-primary);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .modal-radio-option:hover {
+            border-color: #3a3a4e;
+        }
+
+        .modal-radio-option.selected-rf {
+            border-color: rgba(0, 214, 143, 0.5);
+            background: rgba(0, 214, 143, 0.05);
+        }
+
+        .modal-radio-option.selected-btc {
+            border-color: rgba(247, 147, 26, 0.5);
+            background: rgba(247, 147, 26, 0.05);
+        }
+
+        .modal-radio-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .modal-radio-dot::after {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: transparent;
+            transition: background 0.2s;
+        }
+
+        .selected-rf .modal-radio-dot {
+            border-color: var(--green);
+        }
+
+        .selected-rf .modal-radio-dot::after {
+            background: var(--green);
+        }
+
+        .selected-btc .modal-radio-dot {
+            border-color: var(--btc-orange);
+        }
+
+        .selected-btc .modal-radio-dot::after {
+            background: var(--btc-orange);
+        }
+
+        .modal-radio-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .modal-radio-text {
+            flex: 1;
+        }
+
+        .modal-radio-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .modal-radio-detail {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .modal-confirm-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--green) 0%, #00b377 100%);
+            border: none;
+            border-radius: 12px;
+            color: #000;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.3px;
+        }
+
+        .modal-confirm-btn:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 4px 16px rgba(0, 214, 143, 0.3);
+        }
+
+        .modal-confirm-btn:active {
+            transform: scale(0.98);
+        }
+
+        .modal-confirm-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            filter: none;
+            box-shadow: none;
+        }
+
         /* Chart Placeholder */
         .chart-container {
             margin: 0 20px 12px;
@@ -910,13 +1229,61 @@
             border-radius: var(--hist-item-radius);
             padding: var(--hist-item-padding-v) var(--hist-item-padding-h);
             margin-bottom: var(--hist-item-margin);
+            border-left: 3px solid var(--border);
+            transition: border-color 0.2s;
+        }
+
+        .history-item.chosen-rf {
+            border-left-color: var(--green);
+        }
+
+        .history-item.chosen-btc {
+            border-left-color: var(--btc-orange);
         }
 
         .history-item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .history-item-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             margin-bottom: var(--hist-header-margin);
+        }
+
+        .history-meta-desc {
+            font-size: 10px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .history-meta-desc .meta-icon {
+            font-size: 10px;
+        }
+
+        .history-meta-type {
+            font-size: 9px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+            padding: 2px 7px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .history-meta-type.type-rf {
+            background: var(--green-soft);
+            color: var(--green);
+        }
+
+        .history-meta-type.type-btc {
+            background: var(--btc-soft);
+            color: var(--btc-orange);
         }
 
         .history-date {
@@ -1257,15 +1624,22 @@
                         <div class="summary-label">Total Economizado</div>
                         <div class="summary-value white">R$ 15.430,00</div>
                     </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Projeção RF Atual</div>
-                        <div class="summary-value green">R$ 16.891,20</div>
-                        <div class="summary-detail green">▲ +R$ 1.461,20 (+9,47%)</div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">Projeção BTC Atual</div>
-                        <div class="summary-value orange">R$ 22.340,50</div>
-                        <div class="summary-detail orange">▲ +R$ 6.910,50 (+44,79%)</div>
+                    <div class="summary-card full-width">
+                        <div class="summary-label">Projeção Investida</div>
+                        <div class="summary-value green">R$ 18.605,80</div>
+                        <div class="summary-detail green">▲ +R$ 3.175,80 (+20,58%)</div>
+                        <div class="summary-breakdown">
+                            <div class="summary-breakdown-item">
+                                <div class="summary-breakdown-label"><span class="summary-type-indicator rf"></span>Em Renda Fixa</div>
+                                <div class="summary-breakdown-value green">R$ 9.562,30</div>
+                                <div class="summary-breakdown-detail">18 registros · R$ 9.280,00</div>
+                            </div>
+                            <div class="summary-breakdown-item">
+                                <div class="summary-breakdown-label"><span class="summary-type-indicator btc"></span>Em Bitcoin</div>
+                                <div class="summary-breakdown-value orange">R$ 9.043,50</div>
+                                <div class="summary-breakdown-detail">14 registros · R$ 6.150,00</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -1297,6 +1671,7 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 2.500,00</div>
                             <div class="ranking-date">15/01/2026</div>
+                            <div class="ranking-desc">🏷️ Tênis <span class="ranking-type-badge type-rf">📊 RF</span></div>
                         </div>
                     </div>
                     <div class="ranking-item">
@@ -1304,6 +1679,7 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 1.800,00</div>
                             <div class="ranking-date">03/02/2026</div>
+                            <div class="ranking-desc">🏷️ Celular <span class="ranking-type-badge type-btc">₿ BTC</span></div>
                         </div>
                     </div>
                     <div class="ranking-item">
@@ -1311,20 +1687,23 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 1.500,00</div>
                             <div class="ranking-date">22/12/2025</div>
+                            <div class="ranking-desc">🏷️ Viagem <span class="ranking-type-badge type-btc">₿ BTC</span></div>
                         </div>
                     </div>
                     <div class="ranking-item">
                         <div class="ranking-position normal">4</div>
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 1.200,00</div>
-                            <div class="ranking-date">10/01/2026</div>
+                            <div class="ranking-date">15/02/2026</div>
+                            <div class="ranking-desc">🏷️ Relógio <span class="ranking-type-badge type-rf">📊 RF</span></div>
                         </div>
                     </div>
                     <div class="ranking-item">
                         <div class="ranking-position normal">5</div>
                         <div class="ranking-info">
-                            <div class="ranking-amount">R$ 980,00</div>
-                            <div class="ranking-date">28/11/2025</div>
+                            <div class="ranking-amount">R$ 350,00</div>
+                            <div class="ranking-date">21/02/2026</div>
+                            <div class="ranking-desc">🏷️ Balada <span class="ranking-type-badge type-btc">₿ BTC</span></div>
                         </div>
                     </div>
                 </div>
@@ -1396,10 +1775,14 @@
                 <!-- History List -->
                 <div class="section-title">📋 Histórico Completo</div>
                 <div class="history-list">
-                    <div class="history-item">
+                    <div class="history-item chosen-btc">
                         <div class="history-item-header">
                             <span class="history-date">21/02/2026</span>
                             <span class="history-amount">R$ 350,00</span>
+                        </div>
+                        <div class="history-item-meta">
+                            <span class="history-meta-desc"><span class="meta-icon">🏷️</span> Balada</span>
+                            <span class="history-meta-type type-btc">₿ Bitcoin</span>
                         </div>
                         <div class="history-projections">
                             <div class="history-proj rf">
@@ -1415,10 +1798,14 @@
                         </div>
                     </div>
 
-                    <div class="history-item">
+                    <div class="history-item chosen-rf">
                         <div class="history-item-header">
                             <span class="history-date">15/02/2026</span>
                             <span class="history-amount">R$ 1.200,00</span>
+                        </div>
+                        <div class="history-item-meta">
+                            <span class="history-meta-desc"><span class="meta-icon">🏷️</span> Relógio</span>
+                            <span class="history-meta-type type-rf">📊 Renda Fixa</span>
                         </div>
                         <div class="history-projections">
                             <div class="history-proj rf">
@@ -1434,10 +1821,14 @@
                         </div>
                     </div>
 
-                    <div class="history-item">
+                    <div class="history-item chosen-btc">
                         <div class="history-item-header">
                             <span class="history-date">03/02/2026</span>
                             <span class="history-amount">R$ 1.800,00</span>
+                        </div>
+                        <div class="history-item-meta">
+                            <span class="history-meta-desc"><span class="meta-icon">🏷️</span> Celular</span>
+                            <span class="history-meta-type type-btc">₿ Bitcoin</span>
                         </div>
                         <div class="history-projections">
                             <div class="history-proj rf">
@@ -1453,10 +1844,14 @@
                         </div>
                     </div>
 
-                    <div class="history-item">
+                    <div class="history-item chosen-rf">
                         <div class="history-item-header">
                             <span class="history-date">15/01/2026</span>
                             <span class="history-amount">R$ 2.500,00</span>
+                        </div>
+                        <div class="history-item-meta">
+                            <span class="history-meta-desc"><span class="meta-icon">🏷️</span> Tênis</span>
+                            <span class="history-meta-type type-rf">📊 Renda Fixa</span>
                         </div>
                         <div class="history-projections">
                             <div class="history-proj rf">
@@ -1473,10 +1868,14 @@
                     </div>
 
                     <!-- Example with loss in both -->
-                    <div class="history-item">
+                    <div class="history-item chosen-btc">
                         <div class="history-item-header">
                             <span class="history-date">22/12/2025</span>
                             <span class="history-amount">R$ 1.500,00</span>
+                        </div>
+                        <div class="history-item-meta">
+                            <span class="history-meta-desc"><span class="meta-icon">🏷️</span> Viagem</span>
+                            <span class="history-meta-type type-btc">₿ Bitcoin</span>
                         </div>
                         <div class="history-projections">
                             <div class="history-proj rf">
@@ -1499,10 +1898,49 @@
 
         <!-- Fixed Save Button (only visible on Simulator tab) -->
         <div class="save-button-wrapper" id="phone1-save-wrapper">
-            <button class="save-button" onclick="showToast('phone1')">
+            <button class="save-button" onclick="openModal('phone1')">
                 <span class="btn-icon">✓</span>
                 Resolvi Economizar
             </button>
+        </div>
+
+        <!-- Save Modal -->
+        <div class="modal-overlay" id="phone1-modal">
+            <div class="modal-content">
+                <div class="modal-handle"></div>
+                <div class="modal-title">💰 Registrar Economia</div>
+                <div class="modal-subtitle">Transforme essa decisão em investimento</div>
+
+                <div class="modal-amount-display">
+                    <div class="modal-amount-label">Valor economizado</div>
+                    <div class="modal-amount-value">R$ 350,00</div>
+                </div>
+
+                <div class="modal-field-label">O que você deixou de comprar?</div>
+                <input class="modal-input" id="phone1-modal-desc" type="text" placeholder="Ex: Relógio, celular, balada..." maxlength="40">
+
+                <div class="modal-field-label">Onde pretende investir?</div>
+                <div class="modal-radio-group">
+                    <div class="modal-radio-option selected-rf" id="phone1-radio-rf" onclick="selectInvestType('phone1', 'rf')">
+                        <div class="modal-radio-dot"></div>
+                        <div class="modal-radio-icon">📊</div>
+                        <div class="modal-radio-text">
+                            <div class="modal-radio-title">Renda Fixa</div>
+                            <div class="modal-radio-detail">Taxa configurada: 12,5% a.a.</div>
+                        </div>
+                    </div>
+                    <div class="modal-radio-option" id="phone1-radio-btc" onclick="selectInvestType('phone1', 'btc')">
+                        <div class="modal-radio-dot"></div>
+                        <div class="modal-radio-icon">₿</div>
+                        <div class="modal-radio-text">
+                            <div class="modal-radio-title">Bitcoin</div>
+                            <div class="modal-radio-detail">BTC: R$ 650.000,00</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="modal-confirm-btn" onclick="confirmSave('phone1')">✅ CONFIRMAR</button>
+            </div>
         </div>
 
         <!-- Toast -->
@@ -1571,6 +2009,46 @@
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
+
+        function openModal(phoneId) {
+            const modal = document.getElementById(`${phoneId}-modal`);
+            modal.classList.add('active');
+            // Reset state
+            document.getElementById(`${phoneId}-modal-desc`).value = '';
+            selectInvestType(phoneId, 'rf');
+        }
+
+        function closeModal(phoneId) {
+            const modal = document.getElementById(`${phoneId}-modal`);
+            modal.classList.remove('active');
+        }
+
+        function selectInvestType(phoneId, type) {
+            const rfOption = document.getElementById(`${phoneId}-radio-rf`);
+            const btcOption = document.getElementById(`${phoneId}-radio-btc`);
+            rfOption.classList.remove('selected-rf');
+            btcOption.classList.remove('selected-btc');
+            if (type === 'rf') {
+                rfOption.classList.add('selected-rf');
+            } else {
+                btcOption.classList.add('selected-btc');
+            }
+        }
+
+        function confirmSave(phoneId) {
+            closeModal(phoneId);
+            showToast(phoneId);
+        }
+
+        // Close modal when clicking overlay background
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    const phoneId = overlay.id.replace('-modal', '');
+                    closeModal(phoneId);
+                }
+            });
+        });
     </script>
 
 </body>
