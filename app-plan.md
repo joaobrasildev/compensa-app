@@ -73,6 +73,7 @@ src/
 │   ├── SimulatorScreen.tsx
 │   ├── SummaryScreen.tsx
 │   ├── HistoryScreen.tsx
+│   ├── TipsScreen.tsx
 │   └── LegalScreen.tsx
 │
 ├── navigation/
@@ -150,6 +151,7 @@ export const colors = {
   red: '#ff4757', redSoft: 'rgba(255, 71, 87, 0.12)', redText: '#ff6b7a',
   orange: '#ffa726', orangeSoft: 'rgba(255, 167, 38, 0.12)',
   btcOrange: '#f7931a', btcSoft: 'rgba(247, 147, 26, 0.12)',
+  blue: '#2d98da', blueSoft: 'rgba(45, 152, 218, 0.15)',
   backdrop: 'rgba(0, 0, 0, 0.7)', overlayBg: 'rgba(10, 10, 15, 0.8)',
   black: '#000000', transparent: 'transparent',
 } as const;
@@ -200,6 +202,11 @@ export const sizes = {
   histItemPaddingV: 10, histItemPaddingH: 12, histItemRadius: 12,
   histDateSize: 10, histAmountSize: 15,
   histProjLabelSize: 9, histProjValueSize: 12, histProjGainSize: 9,
+  // Tips (Dicas)
+  dicaIconBoxSize: 44, dicaIconBoxRadius: 12, dicaIconSize: 22,
+  dicaTitleSize: 15, dicaBodySize: 13,
+  dicaHighlightSize: 12, dicaHighlightPadV: 6, dicaHighlightPadH: 12, dicaHighlightRadius: 8,
+  dicaHeaderIconSize: 36, dicaHeaderTitleSize: 20,
 } as const;
 
 export const spacing = {
@@ -736,7 +743,7 @@ async function initializeApp(): Promise<void> {
 
 ## 10. Navegação
 
-3 abas com Material Top Tabs.
+4 abas com Material Top Tabs.
 
 ```typescript
 // navigation/TopTabNavigator.tsx
@@ -754,6 +761,7 @@ const Tab = createMaterialTopTabNavigator();
   <Tab.Screen name="Simulador" component={SimulatorScreen} />
   <Tab.Screen name="Resumo" component={SummaryScreen} />
   <Tab.Screen name="Histórico" component={HistoryScreen} />
+  <Tab.Screen name="Dicas" component={TipsScreen} />
 </Tab.Navigator>
 ```
 
@@ -872,6 +880,42 @@ const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 5. Bloco "Dados de Mercado" (atribuição CoinGecko + BCB)
 
 Seções "privacy" e "terms": ScrollView com texto completo + botão voltar.
+
+### 11.5 TipsScreen
+
+Tela 100% estática — sem stores, sem repositórios, sem APIs.
+
+**Layout (ScrollView):**
+1. Header centralizado: emoji 💡 (36px) + "Dicas Financeiras" (20px bold) + subtítulo (13px textSecondary)
+2. Lista de 6 `TipCard` com gap 12
+3. Footer disclaimer: "Dicas educativas — não constituem recomendação de investimento." (11px textMuted)
+
+**Dados:** Array constante `TIPS` com 6 objetos `{ icon, title, body, highlight, color }`.
+
+**Cada TipCard:**
+- Icon-box 44×44, borderRadius 12, background `*Soft` da cor temática
+- Título 15px bold white
+- Corpo 13px textSecondary, lineHeight 1.55
+- Highlight badge: 12px semibold, cor temática sobre background `*Soft`
+
+**Mapeamento de cores:**
+| color | Icon-box bg / Highlight bg | Highlight text |
+|---|---|---|
+| purple | `accentSoft` | `accent` |
+| green | `greenSoft` | `green` |
+| orange | `btcSoft` | `btcOrange` |
+| blue | `blueSoft` | `blue` |
+| red | `redSoft` | `red` |
+
+**Dicas:**
+1. 🧠 Regra dos 72 horas (purple)
+2. 💰 Custo de oportunidade (green)
+3. 📊 O poder dos juros compostos (orange)
+4. 🎯 Tenha uma meta visual (blue)
+5. ⚠️ Conheça seus gatilhos (red)
+6. 📋 Regra 50-30-20 (purple)
+
+**Padrões:** React.memo no TipsScreen e TipCard interno. Todos os estilos via StyleSheet.create com tokens do theme. accessibilityRole="text" e accessibilityLabel em cada card.
 
 ---
 
@@ -1354,11 +1398,12 @@ const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
 Todos os 14 componentes de `components/composed/` (seção 5), incluindo o novo `DeleteConfirmModal.tsx` (ver Fase 4.1.5). Cada um com React.memo.
 
 ### Fase 6 — Telas + Navegação
-- `TopTabNavigator.tsx` (seção 10)
+- `TopTabNavigator.tsx` (seção 10) — 4 abas
 - `SimulatorScreen.tsx` (seção 11.1)
 - `SummaryScreen.tsx` (seção 11.2)
 - `HistoryScreen.tsx` (seção 11.3)
 - `LegalScreen.tsx` (seção 11.4)
+- `TipsScreen.tsx` (seção 11.5)
 - `App.tsx` com boot flow (seção 12)
 
 ### Fase 7 — Compliance & Acessibilidade

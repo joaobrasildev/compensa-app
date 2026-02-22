@@ -50,6 +50,10 @@ export const colors = {
     btcOrange: '#f7931a',
     btcSoft: 'rgba(247, 147, 26, 0.12)',
 
+    // Blue (dicas, info)
+    blue: '#2d98da',
+    blueSoft: 'rgba(45, 152, 218, 0.15)',
+
     // Overlays
     backdrop: 'rgba(0, 0, 0, 0.7)',
     overlayBg: 'rgba(10, 10, 15, 0.8)',
@@ -202,6 +206,19 @@ export const sizes = {
     histProjLabelSize: 9,
     histProjValueSize: 12,
     histProjGainSize: 9,
+
+    // Tips (Dicas) Screen
+    dicaIconBoxSize: 44,
+    dicaIconBoxRadius: 12,
+    dicaIconSize: 22,
+    dicaTitleSize: 15,
+    dicaBodySize: 13,
+    dicaHighlightSize: 12,
+    dicaHighlightPadV: 6,
+    dicaHighlightPadH: 12,
+    dicaHighlightRadius: 8,
+    dicaHeaderIconSize: 36,
+    dicaHeaderTitleSize: 20,
 } as const;
 
 export const spacing = {

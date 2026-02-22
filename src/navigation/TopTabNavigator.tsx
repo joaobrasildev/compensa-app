@@ -7,11 +7,13 @@ import { colors, sizes, fonts } from '@/theme';
 import SimulatorScreen from '@/screens/SimulatorScreen';
 import SummaryScreen from '@/screens/SummaryScreen';
 import HistoryScreen from '@/screens/HistoryScreen';
+import TipsScreen from '@/screens/TipsScreen';
 
 export type TopTabParamList = {
     Simulador: undefined;
     Resumo: undefined;
     'Histórico': undefined;
+    Dicas: undefined;
 };
 
 const Tab = createMaterialTopTabNavigator<TopTabParamList>();
@@ -51,6 +53,7 @@ function TopTabNavigator() {
             <Tab.Screen name="Simulador" component={SimulatorScreen} />
             <Tab.Screen name="Resumo" component={SummaryScreen} />
             <Tab.Screen name="Histórico" component={HistoryScreen} />
+            <Tab.Screen name="Dicas" component={TipsScreen} />
         </Tab.Navigator>
     );
 }
