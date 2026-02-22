@@ -1484,6 +1484,192 @@
         .projection-value.negative {
             color: var(--red-text);
         }
+
+        /* ========== SWIPE TO DELETE ========== */
+        .swipe-container {
+            position: relative;
+            overflow: hidden;
+            border-radius: var(--hist-item-radius);
+            margin-bottom: var(--hist-item-margin);
+        }
+
+        .swipe-container .history-item {
+            margin-bottom: 0;
+            position: relative;
+            z-index: 2;
+            transition: transform 0.25s ease;
+        }
+
+        .swipe-container .history-item.swiping {
+            transition: none;
+        }
+
+        .swipe-actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1;
+        }
+
+        .delete-btn {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255, 71, 87, 0.5);
+            background: linear-gradient(135deg, #1a1a2e 0%, #12121e 100%);
+            color: var(--red-text);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 0 12px rgba(255, 71, 87, 0.1);
+        }
+
+        .delete-btn:hover {
+            border-color: rgba(255, 71, 87, 0.8);
+            box-shadow: 0 0 16px rgba(255, 71, 87, 0.2);
+        }
+
+        .delete-btn:active {
+            transform: scale(0.92);
+            border-color: var(--red);
+        }
+
+        /* ========== DELETE CONFIRMATION MODAL ========== */
+        .delete-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+
+        .delete-modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .delete-modal-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            width: 85%;
+            max-width: 320px;
+            padding: 28px 24px 24px;
+            transform: scale(0.9);
+            transition: transform 0.25s ease;
+            text-align: center;
+        }
+
+        .delete-modal-overlay.active .delete-modal-box {
+            transform: scale(1);
+        }
+
+        .delete-modal-icon {
+            font-size: 40px;
+            margin-bottom: 16px;
+        }
+
+        .delete-modal-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .delete-modal-detail {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .delete-modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-modal-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--btn-border-radius);
+            font-size: var(--btn-font-size);
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+
+        .delete-modal-btn.cancel {
+            background: linear-gradient(135deg, #1a1a2e 0%, #12121e 100%);
+            border: 1.5px solid var(--border);
+            color: var(--text-secondary);
+        }
+
+        .delete-modal-btn.cancel:hover {
+            border-color: #3a3a4e;
+            color: var(--text-primary);
+        }
+
+        .delete-modal-btn.cancel:active {
+            transform: scale(0.97);
+        }
+
+        .delete-modal-btn.confirm-delete {
+            background: linear-gradient(135deg, #ff4757 0%, #d63041 100%);
+            border: 1.5px solid rgba(255, 71, 87, 0.6);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(255, 71, 87, 0.12), 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .delete-modal-btn.confirm-delete:hover {
+            border-color: rgba(255, 71, 87, 0.9);
+            box-shadow: 0 0 24px rgba(255, 71, 87, 0.2), 0 4px 16px rgba(0, 0, 0, 0.5);
+        }
+
+        .delete-modal-btn.confirm-delete:active {
+            transform: scale(0.97);
+            border-color: var(--red);
+            box-shadow: 0 0 28px rgba(255, 71, 87, 0.3), 0 2px 8px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Swipe-out animation */
+        @keyframes swipeDeleteOut {
+            0% {
+                max-height: 300px;
+                opacity: 1;
+                margin-bottom: var(--hist-item-margin);
+            }
+
+            100% {
+                max-height: 0;
+                opacity: 0;
+                margin-bottom: 0;
+                overflow: hidden;
+            }
+        }
+
+        .swipe-container.deleting {
+            animation: swipeDeleteOut 0.35s ease forwards;
+            pointer-events: none;
+        }
     </style>
 </head>
 
@@ -1622,22 +1808,26 @@
                 <div class="summary-grid">
                     <div class="summary-card full-width">
                         <div class="summary-label">Total Economizado</div>
-                        <div class="summary-value white">R$ 15.430,00</div>
+                        <div class="summary-value white" id="summary-total">R$ 15.430,00</div>
                     </div>
                     <div class="summary-card full-width">
                         <div class="summary-label">Projeção Investida</div>
-                        <div class="summary-value green">R$ 18.605,80</div>
-                        <div class="summary-detail green">▲ +R$ 3.175,80 (+20,58%)</div>
+                        <div class="summary-value green" id="summary-projection">R$ 18.605,80</div>
+                        <div class="summary-detail green" id="summary-projection-detail">▲ +R$ 3.175,80 (+20,58%)</div>
                         <div class="summary-breakdown">
                             <div class="summary-breakdown-item">
-                                <div class="summary-breakdown-label"><span class="summary-type-indicator rf"></span>Em Renda Fixa</div>
-                                <div class="summary-breakdown-value green">R$ 9.562,30</div>
-                                <div class="summary-breakdown-detail">18 registros · R$ 9.280,00</div>
+                                <div class="summary-breakdown-label"><span class="summary-type-indicator rf"></span>Em
+                                    Renda Fixa</div>
+                                <div class="summary-breakdown-value green" id="summary-rf-value">R$ 9.562,30</div>
+                                <div class="summary-breakdown-detail" id="summary-rf-detail">18 registros · R$ 9.280,00
+                                </div>
                             </div>
                             <div class="summary-breakdown-item">
-                                <div class="summary-breakdown-label"><span class="summary-type-indicator btc"></span>Em Bitcoin</div>
-                                <div class="summary-breakdown-value orange">R$ 9.043,50</div>
-                                <div class="summary-breakdown-detail">14 registros · R$ 6.150,00</div>
+                                <div class="summary-breakdown-label"><span class="summary-type-indicator btc"></span>Em
+                                    Bitcoin</div>
+                                <div class="summary-breakdown-value orange" id="summary-btc-value">R$ 9.043,50</div>
+                                <div class="summary-breakdown-detail" id="summary-btc-detail">14 registros · R$ 6.150,00
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1648,12 +1838,12 @@
                 <div class="discipline-bar">
                     <div class="discipline-stat">
                         <div class="discipline-emoji">📝</div>
-                        <div class="discipline-number">32</div>
+                        <div class="discipline-number" id="disc-registros">32</div>
                         <div class="discipline-label">Registros</div>
                     </div>
                     <div class="discipline-stat">
                         <div class="discipline-emoji">📅</div>
-                        <div class="discipline-number">R$ 482</div>
+                        <div class="discipline-number" id="disc-media">R$ 482</div>
                         <div class="discipline-label">Média / mês</div>
                     </div>
                     <div class="discipline-stat">
@@ -1665,13 +1855,14 @@
 
                 <!-- Top 5 -->
                 <div class="section-title">🥇 Top 5 Maiores</div>
-                <div class="ranking-list">
+                <div class="ranking-list" id="phone1-ranking-list">
                     <div class="ranking-item">
                         <div class="ranking-position gold">1</div>
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 2.500,00</div>
                             <div class="ranking-date">15/01/2026</div>
-                            <div class="ranking-desc">🏷️ Tênis <span class="ranking-type-badge type-rf">📊 RF</span></div>
+                            <div class="ranking-desc">🏷️ Tênis <span class="ranking-type-badge type-rf">📊 RF</span>
+                            </div>
                         </div>
                     </div>
                     <div class="ranking-item">
@@ -1679,7 +1870,8 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 1.800,00</div>
                             <div class="ranking-date">03/02/2026</div>
-                            <div class="ranking-desc">🏷️ Celular <span class="ranking-type-badge type-btc">₿ BTC</span></div>
+                            <div class="ranking-desc">🏷️ Celular <span class="ranking-type-badge type-btc">₿ BTC</span>
+                            </div>
                         </div>
                     </div>
                     <div class="ranking-item">
@@ -1687,7 +1879,8 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 1.500,00</div>
                             <div class="ranking-date">22/12/2025</div>
-                            <div class="ranking-desc">🏷️ Viagem <span class="ranking-type-badge type-btc">₿ BTC</span></div>
+                            <div class="ranking-desc">🏷️ Viagem <span class="ranking-type-badge type-btc">₿ BTC</span>
+                            </div>
                         </div>
                     </div>
                     <div class="ranking-item">
@@ -1695,7 +1888,8 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 1.200,00</div>
                             <div class="ranking-date">15/02/2026</div>
-                            <div class="ranking-desc">🏷️ Relógio <span class="ranking-type-badge type-rf">📊 RF</span></div>
+                            <div class="ranking-desc">🏷️ Relógio <span class="ranking-type-badge type-rf">📊 RF</span>
+                            </div>
                         </div>
                     </div>
                     <div class="ranking-item">
@@ -1703,7 +1897,8 @@
                         <div class="ranking-info">
                             <div class="ranking-amount">R$ 350,00</div>
                             <div class="ranking-date">21/02/2026</div>
-                            <div class="ranking-desc">🏷️ Balada <span class="ranking-type-badge type-btc">₿ BTC</span></div>
+                            <div class="ranking-desc">🏷️ Balada <span class="ranking-type-badge type-btc">₿ BTC</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1917,11 +2112,13 @@
                 </div>
 
                 <div class="modal-field-label">O que você deixou de comprar?</div>
-                <input class="modal-input" id="phone1-modal-desc" type="text" placeholder="Ex: Relógio, celular, balada..." maxlength="40">
+                <input class="modal-input" id="phone1-modal-desc" type="text"
+                    placeholder="Ex: Relógio, celular, balada..." maxlength="40">
 
                 <div class="modal-field-label">Onde pretende investir?</div>
                 <div class="modal-radio-group">
-                    <div class="modal-radio-option selected-rf" id="phone1-radio-rf" onclick="selectInvestType('phone1', 'rf')">
+                    <div class="modal-radio-option selected-rf" id="phone1-radio-rf"
+                        onclick="selectInvestType('phone1', 'rf')">
                         <div class="modal-radio-dot"></div>
                         <div class="modal-radio-icon">📊</div>
                         <div class="modal-radio-text">
@@ -1940,6 +2137,19 @@
                 </div>
 
                 <button class="modal-confirm-btn" onclick="confirmSave('phone1')">✅ CONFIRMAR</button>
+            </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="delete-modal-overlay" id="phone1-delete-modal">
+            <div class="delete-modal-box">
+                <div class="delete-modal-icon">🗑️</div>
+                <div class="delete-modal-title">Deseja excluir esse registro?</div>
+                <div class="delete-modal-detail" id="delete-modal-detail-text"></div>
+                <div class="delete-modal-buttons">
+                    <button class="delete-modal-btn cancel" onclick="closeDeleteModal()">CANCELAR</button>
+                    <button class="delete-modal-btn confirm-delete" onclick="confirmDelete()">OK</button>
+                </div>
             </div>
         </div>
 
@@ -1981,6 +2191,39 @@
     </div>
 
     <script>
+        // ============ STATE ============
+        let pendingDeleteContainer = null;
+
+        // Base state for records not visible in the list
+        const BASE = {
+            extraRecords: 27,
+            extraSaved: 8080,
+            extraRfCount: 16,
+            extraBtcCount: 11,
+            extraRfSaved: 5580,
+            extraBtcSaved: 2500,
+            extraRfProj: 5826.00,
+            extraBtcProj: 5115.60
+        };
+
+        // ============ FORMATTING ============
+        function parseCurrency(str) {
+            return parseFloat(str.replace(/[^\d,.-]/g, '').replace(/\./g, '').replace(',', '.')) || 0;
+        }
+
+        function formatCurrency(val) {
+            const parts = Math.abs(val).toFixed(2).split('.');
+            const intPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return (val < 0 ? '-' : '') + 'R$ ' + intPart + ',' + parts[1];
+        }
+
+        function formatCurrencyShort(val) {
+            const rounded = Math.round(Math.abs(val));
+            const formatted = rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+            return (val < 0 ? '-' : '') + 'R$ ' + formatted;
+        }
+
+        // ============ TAB NAVIGATION ============
         function switchTab(phoneId, tabName) {
             const phone = document.getElementById(phoneId);
             const tabs = phone.querySelectorAll('.top-tab');
@@ -1994,26 +2237,25 @@
             tabs[idx].classList.add('active');
             phone.querySelector(`#${phoneId}-${tabName}`).classList.add('active');
 
-            // Show/hide fixed save button (only on simulator)
             const saveWrapper = phone.querySelector(`#${phoneId}-save-wrapper`);
             if (saveWrapper) {
                 saveWrapper.style.display = tabName === 'simulator' ? 'block' : 'none';
             }
 
-            // Scroll to top
             phone.querySelector('.screen-content').scrollTop = 0;
         }
 
+        // ============ TOAST ============
         function showToast(phoneId) {
             const toast = document.getElementById(`${phoneId}-toast`);
             toast.classList.add('show');
             setTimeout(() => toast.classList.remove('show'), 2000);
         }
 
+        // ============ SAVE MODAL ============
         function openModal(phoneId) {
             const modal = document.getElementById(`${phoneId}-modal`);
             modal.classList.add('active');
-            // Reset state
             document.getElementById(`${phoneId}-modal-desc`).value = '';
             selectInvestType(phoneId, 'rf');
         }
@@ -2028,11 +2270,8 @@
             const btcOption = document.getElementById(`${phoneId}-radio-btc`);
             rfOption.classList.remove('selected-rf');
             btcOption.classList.remove('selected-btc');
-            if (type === 'rf') {
-                rfOption.classList.add('selected-rf');
-            } else {
-                btcOption.classList.add('selected-btc');
-            }
+            if (type === 'rf') rfOption.classList.add('selected-rf');
+            else btcOption.classList.add('selected-btc');
         }
 
         function confirmSave(phoneId) {
@@ -2040,12 +2279,265 @@
             showToast(phoneId);
         }
 
-        // Close modal when clicking overlay background
-        document.querySelectorAll('.modal-overlay').forEach(overlay => {
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    const phoneId = overlay.id.replace('-modal', '');
-                    closeModal(phoneId);
+        // ============ SWIPE TO DELETE ============
+        function initSwipeToDelete() {
+            const historyList = document.querySelector('.history-list');
+            if (!historyList) return;
+
+            Array.from(historyList.querySelectorAll('.history-item')).forEach(item => {
+                const container = document.createElement('div');
+                container.className = 'swipe-container';
+
+                const actions = document.createElement('div');
+                actions.className = 'swipe-actions';
+                actions.innerHTML = '<button class="delete-btn" tabindex="-1">🗑️</button>';
+
+                item.parentNode.insertBefore(container, item);
+                container.appendChild(item);
+                container.appendChild(actions);
+
+                setupSwipeEvents(container);
+
+                actions.querySelector('.delete-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    openDeleteModal(container);
+                });
+            });
+        }
+
+        function setupSwipeEvents(container) {
+            const item = container.querySelector('.history-item');
+            const SWIPE_MAX = 72;
+            const THRESHOLD = 50;
+
+            function onStart(x) {
+                const wasOpen = container.dataset.open === 'true';
+                container._startX = wasOpen ? x + SWIPE_MAX : x;
+                container._diff = wasOpen ? SWIPE_MAX : 0;
+                container._dragging = true;
+                item.classList.add('swiping');
+                closeAllSwipes(container);
+            }
+
+            function onMove(x) {
+                if (!container._dragging) return;
+                container._diff = Math.max(0, Math.min(SWIPE_MAX, container._startX - x));
+                item.style.transform = `translateX(-${container._diff}px)`;
+            }
+
+            function onEnd() {
+                if (!container._dragging) return;
+                container._dragging = false;
+                item.classList.remove('swiping');
+                if (container._diff > THRESHOLD) {
+                    item.style.transform = `translateX(-${SWIPE_MAX}px)`;
+                    container.dataset.open = 'true';
+                } else {
+                    item.style.transform = 'translateX(0)';
+                    container.dataset.open = '';
+                }
+            }
+
+            // Touch events
+            item.addEventListener('touchstart', (e) => onStart(e.touches[0].clientX), { passive: true });
+            item.addEventListener('touchmove', (e) => onMove(e.touches[0].clientX), { passive: true });
+            item.addEventListener('touchend', onEnd);
+
+            // Mouse events (desktop prototype testing)
+            item.addEventListener('mousedown', (e) => {
+                onStart(e.clientX);
+                const onMouseMove = (ev) => onMove(ev.clientX);
+                const onMouseUp = () => {
+                    onEnd();
+                    document.removeEventListener('mousemove', onMouseMove);
+                    document.removeEventListener('mouseup', onMouseUp);
+                };
+                document.addEventListener('mousemove', onMouseMove);
+                document.addEventListener('mouseup', onMouseUp);
+                e.preventDefault();
+            });
+        }
+
+        function closeAllSwipes(except) {
+            document.querySelectorAll('.swipe-container[data-open="true"]').forEach(c => {
+                if (c !== except) {
+                    c.querySelector('.history-item').style.transform = 'translateX(0)';
+                    c.dataset.open = '';
+                }
+            });
+        }
+
+        // ============ DELETE MODAL ============
+        function openDeleteModal(container) {
+            pendingDeleteContainer = container;
+            const item = container.querySelector('.history-item');
+            const amount = item.querySelector('.history-amount').textContent;
+            const date = item.querySelector('.history-date').textContent;
+            const descEl = item.querySelector('.history-meta-desc');
+            const clone = descEl.cloneNode(true);
+            const icon = clone.querySelector('.meta-icon');
+            if (icon) icon.remove();
+            const desc = clone.textContent.trim();
+
+            document.getElementById('delete-modal-detail-text').innerHTML =
+                `<strong style="color:var(--text-primary);">${amount}</strong> · ${desc} · ${date}`;
+            document.getElementById('phone1-delete-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('phone1-delete-modal').classList.remove('active');
+            if (pendingDeleteContainer) {
+                const item = pendingDeleteContainer.querySelector('.history-item');
+                item.style.transform = 'translateX(0)';
+                pendingDeleteContainer.dataset.open = '';
+            }
+            pendingDeleteContainer = null;
+        }
+
+        function confirmDelete() {
+            if (!pendingDeleteContainer) return;
+            const container = pendingDeleteContainer;
+            pendingDeleteContainer = null;
+            document.getElementById('phone1-delete-modal').classList.remove('active');
+
+            container.classList.add('deleting');
+            setTimeout(() => {
+                container.remove();
+                recalculateSummary();
+                rebuildRanking();
+            }, 350);
+        }
+
+        // ============ RECALCULATE SUMMARY ============
+        function recalculateSummary() {
+            const items = document.querySelectorAll('.history-list .swipe-container:not(.deleting) .history-item');
+            let visSaved = 0, visRfCount = 0, visBtcCount = 0;
+            let visRfSaved = 0, visBtcSaved = 0, visRfProj = 0, visBtcProj = 0;
+
+            items.forEach(item => {
+                const amount = parseCurrency(item.querySelector('.history-amount').textContent);
+                const rfVal = parseCurrency(item.querySelector('.history-proj.rf .history-proj-value').textContent);
+                const btcVal = parseCurrency(item.querySelector('.history-proj.btc .history-proj-value').textContent);
+                const isRf = item.classList.contains('chosen-rf');
+                visSaved += amount;
+                if (isRf) { visRfCount++; visRfSaved += amount; visRfProj += rfVal; }
+                else { visBtcCount++; visBtcSaved += amount; visBtcProj += btcVal; }
+            });
+
+            const totalSaved = BASE.extraSaved + visSaved;
+            const totalRecords = BASE.extraRecords + items.length;
+            const rfCount = BASE.extraRfCount + visRfCount;
+            const btcCount = BASE.extraBtcCount + visBtcCount;
+            const rfSaved = BASE.extraRfSaved + visRfSaved;
+            const btcSaved = BASE.extraBtcSaved + visBtcSaved;
+            const rfProj = BASE.extraRfProj + visRfProj;
+            const btcProj = BASE.extraBtcProj + visBtcProj;
+            const totalProj = rfProj + btcProj;
+            const gain = totalProj - totalSaved;
+            const gainPct = totalSaved > 0 ? (gain / totalSaved * 100) : 0;
+
+            const el = (id) => document.getElementById(id);
+            el('summary-total').textContent = formatCurrency(totalSaved);
+            el('summary-projection').textContent = formatCurrency(totalProj);
+
+            const arrow = gain >= 0 ? '▲' : '▼';
+            const sign = gain >= 0 ? '+' : '-';
+            el('summary-projection-detail').textContent =
+                `${arrow} ${sign}${formatCurrency(Math.abs(gain))} (${sign}${Math.abs(gainPct).toFixed(2).replace('.', ',')}%)`;
+            el('summary-projection-detail').className = `summary-detail ${gain >= 0 ? 'green' : 'red'}`;
+
+            el('summary-rf-value').textContent = formatCurrency(rfProj);
+            el('summary-rf-detail').textContent = `${rfCount} registros · ${formatCurrency(rfSaved)}`;
+            el('summary-btc-value').textContent = formatCurrency(btcProj);
+            el('summary-btc-detail').textContent = `${btcCount} registros · ${formatCurrency(btcSaved)}`;
+
+            el('disc-registros').textContent = totalRecords;
+            el('disc-media').textContent = totalRecords > 0
+                ? formatCurrencyShort(Math.round(totalSaved / totalRecords))
+                : 'R$ 0';
+
+            if (items.length === 0) {
+                const hl = document.querySelector('.history-list');
+                if (hl) hl.innerHTML =
+                    '<div class="empty-state">' +
+                    '<div class="empty-icon">📋</div>' +
+                    '<div class="empty-title">Nenhum registro recente</div>' +
+                    '<div class="empty-sub">Seus registros de economia aparecerão aqui</div>' +
+                    '</div>';
+            }
+        }
+
+        // ============ REBUILD RANKING ============
+        function rebuildRanking() {
+            const items = document.querySelectorAll('.history-list .swipe-container:not(.deleting) .history-item');
+            const data = [];
+
+            items.forEach(item => {
+                const amount = parseCurrency(item.querySelector('.history-amount').textContent);
+                const date = item.querySelector('.history-date').textContent;
+                const descEl = item.querySelector('.history-meta-desc');
+                const clone = descEl.cloneNode(true);
+                const icon = clone.querySelector('.meta-icon');
+                if (icon) icon.remove();
+                const desc = clone.textContent.trim();
+                const isRf = item.classList.contains('chosen-rf');
+                data.push({ amount, date, desc, isRf });
+            });
+
+            data.sort((a, b) => b.amount - a.amount);
+            const top5 = data.slice(0, 5);
+            const rankingList = document.getElementById('phone1-ranking-list');
+            if (!rankingList) return;
+
+            if (top5.length === 0) {
+                rankingList.innerHTML =
+                    '<div class="empty-state" style="padding:30px 20px;">' +
+                    '<div class="empty-icon">🥇</div>' +
+                    '<div class="empty-title">Sem ranking</div>' +
+                    '<div class="empty-sub">Registre economias para ver o ranking</div>' +
+                    '</div>';
+                return;
+            }
+
+            const posClasses = ['gold', 'silver', 'bronze', 'normal', 'normal'];
+            rankingList.innerHTML = top5.map((item, i) => {
+                const typeBadge = item.isRf
+                    ? '<span class="ranking-type-badge type-rf">📊 RF</span>'
+                    : '<span class="ranking-type-badge type-btc">₿ BTC</span>';
+                return `<div class="ranking-item">
+                    <div class="ranking-position ${posClasses[i]}">${i + 1}</div>
+                    <div class="ranking-info">
+                        <div class="ranking-amount">${formatCurrency(item.amount)}</div>
+                        <div class="ranking-date">${item.date}</div>
+                        <div class="ranking-desc">🏷️ ${item.desc} ${typeBadge}</div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // ============ INIT ============
+        document.addEventListener('DOMContentLoaded', () => {
+            initSwipeToDelete();
+
+            // Close save modal on overlay click
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) {
+                        const phoneId = overlay.id.replace('-modal', '');
+                        closeModal(phoneId);
+                    }
+                });
+            });
+
+            // Close delete modal on overlay click
+            document.getElementById('phone1-delete-modal').addEventListener('click', (e) => {
+                if (e.target.id === 'phone1-delete-modal') closeDeleteModal();
+            });
+
+            // Close open swipes when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.swipe-container') && !e.target.closest('.delete-modal-overlay')) {
+                    closeAllSwipes();
                 }
             });
         });

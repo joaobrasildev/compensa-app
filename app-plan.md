@@ -63,6 +63,7 @@ src/
 │       ├── GrowthChart.tsx
 │       ├── HistoryItem.tsx
 │       ├── HistoryList.tsx
+│       ├── DeleteConfirmModal.tsx
 │       ├── SaveButton.tsx
 │       ├── SaveModal.tsx
 │       ├── DisclaimerText.tsx
@@ -381,15 +382,37 @@ Line chart RF (verde) vs BTC (laranja) ao longo do tempo.
 
 ### `HistoryItem`
 ```typescript
-type Props = { saving: EnrichedSaving; };
+type Props = {
+    saving: EnrichedSaving;
+    onDeleteRequest: (id: number) => void;
+    isSwipeOpen: boolean;
+    onSwipeOpen: (id: number) => void;
+};
 ```
 Borda esquerda 3px colorida (verde RF, laranja BTC). Header: data + valor. Meta row: 🏷️ descrição + badge tipo. Body: 2 mini-cards lado a lado (RF HOJE + BTC HOJE) cada um com valor + badge %.
+**Swipe-to-delete:** Gesto de swipe para a esquerda revela botão 🗑️ com borda vermelha (ver Fase 4.1.3 para detalhes completos).
 
 ### `HistoryList`
 ```typescript
-type Props = { savings: EnrichedSaving[]; };
+type Props = {
+    savings: EnrichedSaving[];
+    onDeleteRequest: (id: number) => void;
+};
 ```
-`FlatList` com `keyExtractor={item => item.id.toString()}`. Renderiza `HistoryItem`. Mostra `EmptyState` quando vazio.
+`FlatList` com `keyExtractor={item => item.id.toString()}`. Renderiza `HistoryItem`. Mostra `EmptyState` quando vazio. Gerencia state local `openSwipeId` para controlar qual item está com swipe aberto.
+
+### `DeleteConfirmModal`
+```typescript
+type Props = {
+    visible: boolean;
+    savingAmount: string;
+    savingDescription: string;
+    savingDate: string;
+    onConfirm: () => void;
+    onCancel: () => void;
+};
+```
+Modal centralizado com "Deseja excluir esse registro?". Botão OK com background gradiente vermelho e botão CANCELAR discreto. (Ver Fase 4.1.5 para layout completo.)
 
 ### `SaveButton`
 ```typescript
@@ -526,6 +549,7 @@ type SavingsState = {
   count: number;
   addSaving: (saving: NewSaving) => Promise<void>;  // insert + reload
   loadSavings: () => Promise<void>;
+  deleteSaving: (id: number) => void;  // delete + reload (ver Fase 4.1.2)
 };
 ```
 
@@ -804,7 +828,7 @@ Debounce de 300ms no input de valor antes de recalcular projeções.
 ### 11.3 HistoryScreen
 
 **Dados do store:**
-- `useSavingsStore` → savings
+- `useSavingsStore` → savings, deleteSaving
 - `useMarketStore` → btcPrice
 - `useConfigStore` → fixedRate
 
@@ -812,12 +836,24 @@ Debounce de 300ms no input de valor antes de recalcular projeções.
 - `enrichedSavings = savingsRules.enrichWithProjections(savings, fixedRate, btcPrice)`
 - `chartData = savingsRules.buildChartData(savings, fixedRate, btcPrice)`
 
+**State local:**
+```typescript
+const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+```
+
 **Layout:**
 1. `SectionTitle` "📊 CRESCIMENTO"
 2. `GrowthChart` (chartData) — line chart RF (verde) vs BTC (laranja)
 3. `SectionTitle` "HISTÓRICO"
-4. `HistoryList` (enrichedSavings) — FlatList de HistoryItems
+4. `HistoryList` (enrichedSavings, onDeleteRequest) — FlatList de HistoryItems com swipe-to-delete
 5. `EmptyState` quando vazio
+6. `DeleteConfirmModal` (controlado por deleteModalVisible)
+
+**Fluxo de exclusão (ver Fase 4.1.6):**
+1. `onDeleteRequest(id)` → guarda `pendingDeleteId`, abre `DeleteConfirmModal`
+2. CANCELAR → fecha modal, reseta state, fecha swipe
+3. OK → chama `deleteSaving(id)` do store → recálculo automático em todas as telas
 
 ### 11.4 LegalScreen
 
@@ -1104,8 +1140,210 @@ Todos conforme assinaturas da seção 8.
 - `initService.ts` (seção 9)
 - `useInitApp.ts` hook (seção 12)
 
+### Fase 4.1 — Exclusão de Registros (Swipe-to-Delete)
+
+> **Contexto:** O protótipo `prototype/index.html` (aba Histórico) agora possui a funcionalidade de exclusão de registros por gesto de swipe. Esta fase implementa as fundações necessárias nos artefatos já construídos (Fases 0-4) e documenta o comportamento esperado para os componentes compostos e telas das fases seguintes.
+
+#### 4.1.1 — Novos tokens no theme (`src/theme/index.ts`)
+
+Adicionar os seguintes tokens ao `colors`:
+
+```typescript
+// dentro de colors:
+redGlow: 'rgba(255, 71, 87, 0.5)',
+redGlowSoft: 'rgba(255, 71, 87, 0.12)',
+redGradientStart: '#ff4757',
+redGradientEnd: '#d63041',
+```
+
+Adicionar os seguintes tokens ao `sizes`:
+
+```typescript
+// dentro de sizes:
+// Delete button (swipe actions)
+deleteBtnSize: 46,
+deleteBtnRadius: 12,
+deleteBtnIconSize: 20,
+swipeActionWidth: 72,
+swipeThreshold: 50,
+
+// Delete Confirmation Modal
+deleteModalWidth: 0.85,  // 85% da largura do container
+deleteModalMaxWidth: 320,
+deleteModalIconSize: 40,
+deleteModalTitleSize: 17,
+deleteModalDetailSize: 12,
+```
+
+#### 4.1.2 — Ação `deleteSaving` no `useSavingsStore` (`src/stores/useSavingsStore.ts`)
+
+O store atualmente possui apenas `addSaving` e `loadSavings`. Adicionar a ação `deleteSaving`:
+
+```typescript
+type SavingsState = {
+    savings: Saving[];
+    totalSaved: number;
+    count: number;
+    addSaving: (saving: NewSaving) => void;
+    loadSavings: () => void;
+    deleteSaving: (id: number) => void;  // ← NOVO
+};
+```
+
+Implementação de `deleteSaving`:
+
+```typescript
+deleteSaving: (id) => {
+    savingsRepo.deleteById(id);
+    // Reload completo após deletar
+    const savings = savingsRepo.getAll();
+    const totalSaved = savingsRepo.getTotalAmount();
+    const count = savingsRepo.getCount();
+    set({ savings, totalSaved, count });
+},
+```
+
+> **Nota:** `savingsRepository.deleteById(id)` já existe implementado na Fase 2.
+
+#### 4.1.3 — Comportamento do `HistoryItem` com swipe (Fase 5)
+
+O componente `HistoryItem` (atualmente placeholder) deve implementar gesto de **swipe-to-left** para revelar um botão de exclusão:
+
+**Gesto:**
+- Usar `PanResponder` nativo do React Native (sem adicionar dependência `react-native-gesture-handler` ou `react-native-swipeable`).
+- Ao arrastar o item para a esquerda, revelar uma área de ação de largura `sizes.swipeActionWidth` (72px).
+- Threshold para fixar a posição aberta: `sizes.swipeThreshold` (50px).
+- Se o arrasto não atingir o threshold, o item volta à posição original com animação.
+- Apenas um item pode estar "aberto" por vez — ao iniciar swipe em outro, o anterior fecha.
+
+**Botão de lixeira (dentro da área revelada):**
+- Dimensões: `sizes.deleteBtnSize` × `sizes.deleteBtnSize` (46×46).
+- `borderRadius: sizes.deleteBtnRadius` (12).
+- Background: gradiente de `colors.bgCardHover` para `colors.bgCard` (mesmo padrão do botão "Resolvi Economizar", mas vermelho).
+- Borda: `borderWidths.medium` (1.5px) com cor `colors.redGlow`.
+- Ícone: 🗑️ com tamanho `sizes.deleteBtnIconSize`, cor `colors.redText`.
+- `boxShadow`: `0 0 12px colors.redGlowSoft`.
+- `:active` → `transform: scale(0.92)`, border `colors.red`.
+- `accessibilityRole="button"`, `accessibilityLabel="Excluir registro de R$ {amount}"`.
+
+**Animação de remoção:**
+- Ao confirmar exclusão, o container do item deve animar: `maxHeight` colapsa para 0, `opacity` para 0, `marginBottom` para 0. Duração: 350ms.
+- Após animação completa, remover o item da lista.
+
+**Nova assinatura de props do `HistoryItem`:**
+
+```typescript
+type Props = {
+    saving: EnrichedSaving;
+    onDeleteRequest: (id: number) => void;  // ← NOVO: abre modal de confirmação
+    isSwipeOpen: boolean;                    // ← NOVO: controla se está aberto
+    onSwipeOpen: (id: number) => void;       // ← NOVO: notifica pai que abriu
+};
+```
+
+#### 4.1.4 — `HistoryList` com suporte a exclusão (Fase 5)
+
+Gerencia qual item está com swipe aberto e propaga callbacks:
+
+```typescript
+type Props = {
+    savings: EnrichedSaving[];
+    onDeleteRequest: (id: number) => void;  // ← NOVO
+};
+```
+
+**State local:** `openSwipeId: number | null` — controla qual item está aberto.
+
+Ao tocar fora de qualquer item com swipe aberto, fechar.
+
+#### 4.1.5 — Modal de confirmação de exclusão (Fase 5/6)
+
+Criar o modal de confirmação de exclusão **reutilizando `AppModal`** como base, mas com layout centralizado (diferente do bottom-sheet padrão). O modal pode ser implementado de duas formas:
+
+**Opção recomendada — Componente `DeleteConfirmModal` em `components/composed/`:**
+
+```typescript
+type DeleteConfirmModalProps = {
+    visible: boolean;
+    savingAmount: string;       // "R$ 350,00" (formatado)
+    savingDescription: string;  // "Balada"
+    savingDate: string;         // "21/02/2026"
+    onConfirm: () => void;
+    onCancel: () => void;
+};
+```
+
+**Layout visual (conforme protótipo):**
+1. Overlay: backdrop preto 70% + blur.
+2. Box centralizado (não bottom-sheet): bg `colors.bgCard`, border `colors.border`, `borderRadius: radii['3xl']` (20px).
+3. Largura: 85% do container, max 320px.
+4. Ícone: 🗑️ `sizes.deleteModalIconSize` (40px), centralizado.
+5. Título: **"Deseja excluir esse registro?"** — `sizes.deleteModalTitleSize` (17px), weight bold, `colors.textPrimary`.
+6. Detalhe: **"R$ 350,00 · Balada · 21/02/2026"** — `sizes.deleteModalDetailSize` (12px), `colors.textMuted`, com o valor em `colors.textPrimary` + bold.
+7. Dois botões lado a lado em row com `gap: spacing.lg`:
+
+   **Botão CANCELAR:**
+   - Background: gradiente de `colors.bgCardHover` para `colors.bgCard`.
+   - Borda: `borderWidths.medium` com `colors.border`.
+   - Texto: "CANCELAR", `sizes.btnFontSize`, weight bold, cor `colors.textSecondary`.
+   - Hover: border `#3a3a4e`.
+   - `accessibilityRole="button"`, `accessibilityLabel="Cancelar exclusão"`.
+
+   **Botão OK (confirmar exclusão):**
+   - Background: `LinearGradient` de `colors.redGradientStart` (#ff4757) para `colors.redGradientEnd` (#d63041).
+   - Borda: `borderWidths.medium` com `colors.redGlow`.
+   - Texto: "OK", `sizes.btnFontSize`, weight bold, cor `colors.textPrimary` (#ffffff).
+   - Shadow: `0 0 20px colors.redGlowSoft`, elevation 4.
+   - Active: `transform: scale(0.97)`, border `colors.red`.
+   - `accessibilityRole="button"`, `accessibilityLabel="Confirmar exclusão do registro"`.
+
+**Animação:** Overlay fade-in 250ms + box `scale(0.9)` → `scale(1)` em 250ms.
+
+**IMPORTANTE:** Seguir o mesmo padrão de profissionalismo do botão "Resolvi Economizar" — gradiente, bordas glow, shadows, feedback tátil.
+
+#### 4.1.6 — Fluxo de exclusão no `HistoryScreen` (Fase 6)
+
+O `HistoryScreen` orquestra todo o fluxo:
+
+**State local adicional:**
+```typescript
+const [deleteModalVisible, setDeleteModalVisible] = useState(false);
+const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+```
+
+**Fluxo:**
+1. Usuário arrasta `HistoryItem` para a esquerda → revela botão 🗑️.
+2. Usuário toca no 🗑️ → `HistoryScreen` recebe `onDeleteRequest(id)`.
+3. `HistoryScreen` guarda `pendingDeleteId = id`, abre `DeleteConfirmModal`.
+4. **CANCELAR:** Fecha modal, reseta `pendingDeleteId`, fecha o swipe do item.
+5. **OK:** Chama `deleteSaving(pendingDeleteId)` do store → store executa `deleteById` no SQLite + reload.
+6. Fecha modal, reseta `pendingDeleteId`.
+7. Como `savings` no store mudou, `useMemo` de `enrichedSavings` e `chartData` recalculam automaticamente.
+
+#### 4.1.7 — Recálculo automático no `SummaryScreen` (Fase 6)
+
+**Nenhuma mudança de código necessária no `SummaryScreen`** além do que já está especificado na seção 11.2, pois:
+- `SummaryCards` lê `savingsRules.calculateTotals(savings, fixedRate, btcPrice)` — como `savings` no store foi atualizado pelo `deleteSaving`, o `useMemo` recalcula **Total Economizado**, **Projeção Investida**, breakdown RF/BTC, contagens e ganho percentual automaticamente.
+- `DisciplineStats` lê `disciplineRules.calculateDiscipline(savings)` — recalcula automaticamente.
+- `RankingList` lê `savings` ordenado por `amount DESC limit 5` — recalcula automaticamente, removendo o item excluído do Top 5 se estiver lá.
+
+> **Verificação:** Confirmar que `SummaryScreen` usa `useSavingsStore(s => s.savings)` como seletor reativo. Ao deletar um registro no `HistoryScreen`, o `SummaryScreen` será re-renderizado com os dados atualizados ao navegar para a aba.
+
+#### 4.1.8 — Checklist de implementação
+
+| # | Arquivo | Alteração | Fase origem |
+|---|---|---|---|
+| 1 | `src/theme/index.ts` | Adicionar tokens `redGlow`, `redGlowSoft`, `redGradientStart`, `redGradientEnd`, `deleteBtnSize`, `deleteBtnRadius`, `deleteBtnIconSize`, `swipeActionWidth`, `swipeThreshold`, `deleteModalWidth`, `deleteModalMaxWidth`, `deleteModalIconSize`, `deleteModalTitleSize`, `deleteModalDetailSize` | Fase 0 |
+| 2 | `src/stores/useSavingsStore.ts` | Adicionar ação `deleteSaving(id: number)` que chama `savingsRepo.deleteById()` + reload | Fase 4 |
+| 3 | `src/components/composed/HistoryItem.tsx` | Implementar `PanResponder` swipe-to-left + botão 🗑️ com borda vermelha | Fase 5 |
+| 4 | `src/components/composed/HistoryList.tsx` | Gerenciar `openSwipeId` + propagar `onDeleteRequest` | Fase 5 |
+| 5 | `src/components/composed/DeleteConfirmModal.tsx` | **NOVO** — Modal centralizado com "Deseja excluir esse registro?", botão OK (vermelho) e CANCELAR | Fase 5 |
+| 6 | `src/screens/HistoryScreen.tsx` | Orquestrar fluxo: `pendingDeleteId` → modal → `deleteSaving` → recálculo automático | Fase 6 |
+
+> **Dependência:** Os itens 1 e 2 devem ser executados **antes** da Fase 5 (são modificações em artefatos já construídos). Os itens 3-5 fazem parte da Fase 5. O item 6 faz parte da Fase 6.
+
 ### Fase 5 — Componentes Compostos
-Todos os 13 componentes de `components/composed/` (seção 5). Cada um com React.memo.
+Todos os 14 componentes de `components/composed/` (seção 5), incluindo o novo `DeleteConfirmModal.tsx` (ver Fase 4.1.5). Cada um com React.memo.
 
 ### Fase 6 — Telas + Navegação
 - `TopTabNavigator.tsx` (seção 10)
