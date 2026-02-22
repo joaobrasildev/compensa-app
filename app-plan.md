@@ -119,74 +119,102 @@ src/
 
 Arquivo único de tokens. Todos os `StyleSheet.create()` importam daqui.
 
+### 🚨 REGRA CRÍTICA — ZERO ESTILOS AVULSOS
+
+> **É TERMINANTEMENTE PROIBIDO inserir valores literais de estilo (cores hex/rgba, números de fontSize, padding, margin, borderRadius, borderWidth, opacity, zIndex, letterSpacing, fontWeight, etc.) diretamente nos componentes.**
+>
+> **TODO valor visual DEVE vir de `src/theme/index.ts`.**
+>
+> Se um token não existe, ele deve ser **criado no theme** antes de ser usado.
+>
+> Exemplos de violação:
+> ```ts
+> // ❌ PROIBIDO
+> { fontSize: 13, borderRadius: 5, color: '#1a1a2e', opacity: 0.4 }
+>
+> // ✅ CORRETO
+> { fontSize: sizes.textMd, borderRadius: sizes.badgeRadius, color: colors.bgCardHover, opacity: opacity.disabled }
+> ```
+>
+> Esta regra se aplica a TODOS os arquivos: componentes base, compostos, telas e qualquer `StyleSheet.create()` do projeto.
+
 ```typescript
 export const colors = {
-  bgPrimary: '#0a0a0f',
-  bgCard: '#12121e',
-  bgCardHover: '#1a1a2e',
-  bgInput: '#16162a',
-  border: '#2a2a3a',
-  borderFocus: '#6c5ce7',
-  textPrimary: '#ffffff',
-  textSecondary: '#a0a0b8',
-  textMuted: '#555570',
-  textLabel: '#7878a0',
-  accent: '#6c5ce7',
-  accentSoft: 'rgba(108, 92, 231, 0.15)',
-  green: '#00d68f',
-  greenSoft: 'rgba(0, 214, 143, 0.12)',
-  greenText: '#00e69a',
-  red: '#ff4757',
-  redSoft: 'rgba(255, 71, 87, 0.12)',
-  redText: '#ff6b7a',
-  orange: '#ffa726',
-  orangeSoft: 'rgba(255, 167, 38, 0.12)',
-  btcOrange: '#f7931a',
-  btcSoft: 'rgba(247, 147, 26, 0.12)',
+  bgPrimary: '#0a0a0f', bgCard: '#12121e', bgCardHover: '#1a1a2e', bgInput: '#16162a',
+  border: '#2a2a3a', borderFocus: '#6c5ce7',
+  textPrimary: '#ffffff', textSecondary: '#a0a0b8', textMuted: '#555570', textLabel: '#7878a0',
+  accent: '#6c5ce7', accentSoft: 'rgba(108, 92, 231, 0.15)',
+  green: '#00d68f', greenSoft: 'rgba(0, 214, 143, 0.12)', greenText: '#00e69a',
+  greenGlow: 'rgba(0, 214, 143, 0.35)', greenGlowSoft: 'rgba(0, 214, 143, 0.15)',
+  red: '#ff4757', redSoft: 'rgba(255, 71, 87, 0.12)', redText: '#ff6b7a',
+  orange: '#ffa726', orangeSoft: 'rgba(255, 167, 38, 0.12)',
+  btcOrange: '#f7931a', btcSoft: 'rgba(247, 147, 26, 0.12)',
+  backdrop: 'rgba(0, 0, 0, 0.7)', overlayBg: 'rgba(10, 10, 15, 0.8)',
+  black: '#000000', transparent: 'transparent',
 } as const;
 
 export const fonts = {
-  regular: undefined, // system font
-  bold: undefined,
-  weight: {
-    regular: '400' as const,
-    medium: '500' as const,
-    semibold: '600' as const,
-    bold: '700' as const,
-  },
+  regular: undefined, bold: undefined,
+  weight: { regular: '400', medium: '500', semibold: '600', bold: '700' },
 } as const;
 
 export const sizes = {
-  textXs: 9, textSm: 10, textBase: 12, textMd: 13,
-  textLg: 15, textXl: 17, text2xl: 19, text3xl: 22,
+  // Texto
+  textXs: 9, textSm: 10, textSmPlus: 11, textBase: 12, textMd: 13,
+  textMdPlus: 14, textLg: 15, textLgPlus: 16, textXl: 17, text2xl: 19, text3xl: 22, text4xl: 36,
+  minTouchTarget: 44,
+  // Inputs
   inputFontSize: 18, inputRateFontSize: 16,
   inputPaddingV: 10, inputPaddingH: 14, inputBorderRadius: 10,
   inputPrefixSize: 15, inputSuffixSize: 13, inputLabelSize: 12,
+  inputBorderWidth: 1.5, inputPrefixPad: 42, inputSuffixPad: 60,
+  // Chips
   chipPaddingV: 8, chipPaddingH: 10, chipIconSize: 16,
   chipLabelSize: 9, chipValueSize: 12, chipBorderRadius: 10,
+  // Botão
   btnPaddingV: 14, btnFontSize: 14, btnBorderRadius: 12,
+  btnIconSize: 20, btnIconFontSize: 11, btnBorderWidth: 1.5, btnShadowRadius: 20, btnElevation: 4,
+  // Badge
+  badgePaddingH: 6, badgePaddingV: 2, badgeRadius: 5,
+  // Section Title
+  sectionBarW: 3, sectionBarH: 14, sectionBarRadius: 2,
+  // Modal
+  modalTopRadius: 20, modalHandleW: 36, modalHandleH: 4, modalHandleRadius: 2,
+  // Radio
+  radioIconSize: 18, radioCircleSize: 18, radioDotSize: 8, radioBorderWidth: 2,
+  // Empty State
+  emptyIconSize: 36, emptyLineHeight: 16,
+  // Ranking
   rankPaddingV: 7, rankPaddingH: 10, rankBadgeSize: 22,
   rankBadgeRadius: 6, rankBadgeFont: 11, rankAmountSize: 13, rankDateSize: 10,
+  // Projections
   projCardRadius: 12, projPeriodSize: 12, projLabelSize: 11,
   projValueSize: 12, projGainSize: 10, projSubSize: 10,
+  // Summary
   summaryCardPadding: 11, summaryCardRadius: 12,
   summaryLabelSize: 10, summaryValueSize: 17, summaryDetailSize: 10,
-  discPadding: 10, discRadius: 12, discEmojiSize: 20,
-  discNumberSize: 15, discLabelSize: 9,
+  // Discipline
+  discPadding: 10, discRadius: 12, discEmojiSize: 20, discNumberSize: 15, discLabelSize: 9,
+  // History
   histItemPaddingV: 10, histItemPaddingH: 12, histItemRadius: 12,
   histDateSize: 10, histAmountSize: 15,
   histProjLabelSize: 9, histProjValueSize: 12, histProjGainSize: 9,
 } as const;
 
 export const spacing = {
-  xs: 4, sm: 6, md: 8, lg: 10, xl: 12, '2xl': 16, '3xl': 20, '4xl': 24,
+  xxs: 2, xs: 4, sm: 6, md: 8, lg: 10, xl: 12, '2xl': 16, '3xl': 20, '4xl': 24,
 } as const;
 
 export const radii = {
-  sm: 6, md: 8, lg: 10, xl: 12, '2xl': 16,
+  xs: 4, sm: 6, md: 8, lg: 10, xl: 12, '2xl': 16, '3xl': 20,
 } as const;
 
-const theme = { colors, fonts, sizes, spacing, radii } as const;
+export const opacity = { disabled: 0.4, muted: 0.6 } as const;
+export const zIndices = { local: 1, modal: 20, overlay: 30 } as const;
+export const borderWidths = { thin: 1, medium: 1.5, thick: 2 } as const;
+export const letterSpacings = { tight: 0.5, wide: 1 } as const;
+
+const theme = { colors, fonts, sizes, spacing, radii, opacity, zIndices, borderWidths, letterSpacings } as const;
 export default theme;
 ```
 

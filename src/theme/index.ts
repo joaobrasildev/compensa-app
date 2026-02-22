@@ -1,6 +1,7 @@
 // src/theme/index.ts
 // Design System — Tokens centralizados
-// Todos os StyleSheet.create() importam daqui.
+// 🚨 REGRA: Todos os StyleSheet.create() importam daqui.
+// Nenhum valor literal de estilo é permitido nos componentes.
 
 export const colors = {
     // Backgrounds
@@ -27,6 +28,8 @@ export const colors = {
     green: '#00d68f',
     greenSoft: 'rgba(0, 214, 143, 0.12)',
     greenText: '#00e69a',
+    greenGlow: 'rgba(0, 214, 143, 0.35)',
+    greenGlowSoft: 'rgba(0, 214, 143, 0.15)',
 
     // Red (negativo, perdas)
     red: '#ff4757',
@@ -40,6 +43,14 @@ export const colors = {
     // Bitcoin
     btcOrange: '#f7931a',
     btcSoft: 'rgba(247, 147, 26, 0.12)',
+
+    // Overlays
+    backdrop: 'rgba(0, 0, 0, 0.7)',
+    overlayBg: 'rgba(10, 10, 15, 0.8)',
+
+    // Absolutos
+    black: '#000000',
+    transparent: 'transparent',
 } as const;
 
 export const fonts = {
@@ -60,12 +71,19 @@ export const sizes = {
     // Texto
     textXs: 9,
     textSm: 10,
+    textSmPlus: 11,
     textBase: 12,
     textMd: 13,
+    textMdPlus: 14,
     textLg: 15,
+    textLgPlus: 16,
     textXl: 17,
     text2xl: 19,
     text3xl: 22,
+    text4xl: 36,
+
+    // Touch target mínimo (acessibilidade)
+    minTouchTarget: 44,
 
     // Inputs
     inputFontSize: 18,
@@ -76,6 +94,9 @@ export const sizes = {
     inputPrefixSize: 15,
     inputSuffixSize: 13,
     inputLabelSize: 12,
+    inputBorderWidth: 1.5,
+    inputPrefixPad: 42,
+    inputSuffixPad: 60,
 
     // Chips
     chipPaddingV: 8,
@@ -89,6 +110,37 @@ export const sizes = {
     btnPaddingV: 14,
     btnFontSize: 14,
     btnBorderRadius: 12,
+    btnIconSize: 20,
+    btnIconFontSize: 11,
+    btnBorderWidth: 1.5,
+    btnShadowRadius: 20,
+    btnElevation: 4,
+
+    // Badge
+    badgePaddingH: 6,
+    badgePaddingV: 2,
+    badgeRadius: 5,
+
+    // Section Title
+    sectionBarW: 3,
+    sectionBarH: 14,
+    sectionBarRadius: 2,
+
+    // Modal
+    modalTopRadius: 20,
+    modalHandleW: 36,
+    modalHandleH: 4,
+    modalHandleRadius: 2,
+
+    // Radio
+    radioIconSize: 18,
+    radioCircleSize: 18,
+    radioDotSize: 8,
+    radioBorderWidth: 2,
+
+    // Empty State
+    emptyIconSize: 36,
+    emptyLineHeight: 16,
 
     // Ranking
     rankPaddingV: 7,
@@ -133,6 +185,7 @@ export const sizes = {
 } as const;
 
 export const spacing = {
+    xxs: 2,
     xs: 4,
     sm: 6,
     md: 8,
@@ -144,12 +197,46 @@ export const spacing = {
 } as const;
 
 export const radii = {
+    xs: 4,
     sm: 6,
     md: 8,
     lg: 10,
     xl: 12,
     '2xl': 16,
+    '3xl': 20,
 } as const;
 
-const theme = { colors, fonts, sizes, spacing, radii } as const;
+export const opacity = {
+    disabled: 0.4,
+    muted: 0.6,
+} as const;
+
+export const zIndices = {
+    local: 1,
+    modal: 20,
+    overlay: 30,
+} as const;
+
+export const borderWidths = {
+    thin: 1,
+    medium: 1.5,
+    thick: 2,
+} as const;
+
+export const letterSpacings = {
+    tight: 0.5,
+    wide: 1,
+} as const;
+
+const theme = {
+    colors,
+    fonts,
+    sizes,
+    spacing,
+    radii,
+    opacity,
+    zIndices,
+    borderWidths,
+    letterSpacings,
+} as const;
 export default theme;
