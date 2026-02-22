@@ -4,6 +4,7 @@
 import React, { useCallback } from 'react';
 import { View, StyleSheet, StatusBar, Modal } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizes } from '@/theme';
 import { useInitApp } from '@/hooks/useInitApp';
@@ -77,24 +78,26 @@ export default function App() {
 
     // ── App pronto ──
     return (
-        <SafeAreaProvider>
-            <NavigationContainer>
-                <SafeAreaView style={styles.container} edges={['top']}>
-                    <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
-                    <TopTabNavigator />
+        <GestureHandlerRootView style={styles.container}>
+            <SafeAreaProvider>
+                <NavigationContainer>
+                    <SafeAreaView style={styles.container} edges={['top']}>
+                        <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
+                        <TopTabNavigator />
 
-                    {/* Modal Legal (full-screen) */}
-                    <Modal
-                        visible={legalVisible}
-                        animationType="slide"
-                        presentationStyle="fullScreen"
-                        onRequestClose={handleCloseLegal}
-                    >
-                        <LegalScreen onClose={handleCloseLegal} />
-                    </Modal>
-                </SafeAreaView>
-            </NavigationContainer>
-        </SafeAreaProvider>
+                        {/* Modal Legal (full-screen) */}
+                        <Modal
+                            visible={legalVisible}
+                            animationType="slide"
+                            presentationStyle="fullScreen"
+                            onRequestClose={handleCloseLegal}
+                        >
+                            <LegalScreen onClose={handleCloseLegal} />
+                        </Modal>
+                    </SafeAreaView>
+                </NavigationContainer>
+            </SafeAreaProvider>
+        </GestureHandlerRootView>
     );
 }
 

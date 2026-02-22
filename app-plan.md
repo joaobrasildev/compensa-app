@@ -390,7 +390,7 @@ type Props = {
 };
 ```
 Borda esquerda 3px colorida (verde RF, laranja BTC). Header: data absoluta (`formatDate`) + data relativa (`formatRelativeDate`) separadas por traço (ex: "21/02/2026 – Hoje") + valor. Meta row: 🏷️ descrição + badge tipo. Título "RENDIMENTO ATUAL" (variant muted, weight semibold) seguido de 2 mini-cards lado a lado (RF HOJE + BTC HOJE) cada um com valor + badge %. Seção "PROJEÇÃO SIMULADA" (condicional, exibida apenas se existirem projeções salvas): 3 linhas de 2 mini-cards (RF 1a/BTC 1a, RF 5a/BTC 5a, RF 10a/BTC 10a), cada um com valor formatado (`formatBRL`) + badge de ganho % calculado via `((proj - amount) / amount) * 100`. Cada par só é renderizado se ambos os valores (RF e BTC) forem não-nulos.
-**Swipe-to-delete:** Gesto de swipe para a esquerda revela botão 🗑️ com borda vermelha (ver Fase 4.1.3 para detalhes completos).
+**Swipe-to-delete:** Usa componente `Swipeable` de `react-native-gesture-handler` (resolve conflito de gestos com Material Top Tabs). Gesto de swipe para a esquerda revela botão 🗑️ com borda vermelha. Props `rightThreshold`, `overshootRight={false}`, `friction={2}`. Fechamento programático via `swipeableRef.current?.close()`. Requer `GestureHandlerRootView` no `App.tsx`.
 
 ### `HistoryList`
 ```typescript
@@ -1212,14 +1212,17 @@ deleteSaving: (id) => {
 
 #### 4.1.3 — Comportamento do `HistoryItem` com swipe (Fase 5)
 
-O componente `HistoryItem` (atualmente placeholder) deve implementar gesto de **swipe-to-left** para revelar um botão de exclusão:
+O componente `HistoryItem` implementa gesto de **swipe-to-left** para revelar um botão de exclusão:
 
 **Gesto:**
-- Usar `PanResponder` nativo do React Native (sem adicionar dependência `react-native-gesture-handler` ou `react-native-swipeable`).
-- Ao arrastar o item para a esquerda, revelar uma área de ação de largura `sizes.swipeActionWidth` (72px).
-- Threshold para fixar a posição aberta: `sizes.swipeThreshold` (50px).
-- Se o arrasto não atingir o threshold, o item volta à posição original com animação.
+- Usar componente `Swipeable` de `react-native-gesture-handler` (roda no thread nativo, sem conflito com Material Top Tabs).
+- `renderRightActions` retorna o botão 🗑️.
+- `rightThreshold: sizes.swipeThreshold` (50px) para fixar a posição aberta.
+- `overshootRight={false}` e `friction={2}` para suavidade.
+- `onSwipeableOpen` notifica o pai.
+- Fechamento programático via `swipeableRef.current?.close()` quando `isSwipeOpen` muda para `false`.
 - Apenas um item pode estar "aberto" por vez — ao iniciar swipe em outro, o anterior fecha.
+- Requer `GestureHandlerRootView` envolvendo o app no `App.tsx`.
 
 **Botão de lixeira (dentro da área revelada):**
 - Dimensões: `sizes.deleteBtnSize` × `sizes.deleteBtnSize` (46×46).
