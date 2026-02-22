@@ -15,7 +15,7 @@ import { colors, sizes, spacing, borderWidths, fonts, letterSpacings } from '@/t
 import type { EnrichedSaving } from '@/types';
 import AppText from '@/components/base/AppText';
 import Badge from '@/components/base/Badge';
-import { formatBRL, formatDate } from '@/rules/formatRules';
+import { formatBRL, formatDate, formatRelativeDate } from '@/rules/formatRules';
 
 type HistoryItemProps = {
     saving: EnrichedSaving;
@@ -135,7 +135,7 @@ function HistoryItem({
                     {/* Header: data + valor */}
                     <View style={styles.header}>
                         <AppText variant="muted" style={styles.date}>
-                            {formatDate(saving.created_at)}
+                            {formatDate(saving.created_at)} – {formatRelativeDate(saving.created_at)}
                         </AppText>
                         <AppText weight="bold" style={styles.amount}>
                             {formatBRL(saving.amount)}

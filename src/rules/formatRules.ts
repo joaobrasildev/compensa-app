@@ -40,28 +40,23 @@ export function formatDate(date: Date | string): string {
     return `${day}/${month}/${year}`;
 }
 
-/** "há 3 dias", "há 2 semanas", "há 1 mês", etc. */
+/** "Hoje", "Há 3 dias", "Há 2 semanas", "Há 1 mês", etc. */
 export function formatRelativeDate(date: Date | string): string {
     const d = typeof date === 'string' ? new Date(date) : date;
     const now = new Date();
     const diffMs = now.getTime() - d.getTime();
-    const diffSec = Math.floor(diffMs / 1000);
-    const diffMin = Math.floor(diffSec / 60);
-    const diffHour = Math.floor(diffMin / 60);
-    const diffDay = Math.floor(diffHour / 24);
+    const diffDay = Math.floor(diffMs / (1000 * 60 * 60 * 24));
     const diffWeek = Math.floor(diffDay / 7);
     const diffMonth = Math.floor(diffDay / 30);
     const diffYear = Math.floor(diffDay / 365);
 
-    if (diffSec < 60) return 'agora';
-    if (diffMin < 60) return `há ${diffMin} min`;
-    if (diffHour < 24) return `há ${diffHour}h`;
-    if (diffDay === 1) return 'há 1 dia';
-    if (diffDay < 7) return `há ${diffDay} dias`;
-    if (diffWeek === 1) return 'há 1 semana';
-    if (diffWeek < 5) return `há ${diffWeek} semanas`;
-    if (diffMonth === 1) return 'há 1 mês';
-    if (diffMonth < 12) return `há ${diffMonth} meses`;
-    if (diffYear === 1) return 'há 1 ano';
-    return `há ${diffYear} anos`;
+    if (diffDay < 1) return 'Hoje';
+    if (diffDay === 1) return 'Há 1 dia';
+    if (diffDay < 7) return `Há ${diffDay} dias`;
+    if (diffWeek === 1) return 'Há 1 semana';
+    if (diffWeek < 5) return `Há ${diffWeek} semanas`;
+    if (diffMonth === 1) return 'Há 1 mês';
+    if (diffMonth < 12) return `Há ${diffMonth} meses`;
+    if (diffYear === 1) return 'Há 1 ano';
+    return `Há ${diffYear} anos`;
 }
