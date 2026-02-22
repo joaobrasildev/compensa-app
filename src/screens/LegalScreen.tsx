@@ -13,7 +13,7 @@ type LegalScreenProps = {
 };
 
 const APP_VERSION = '1.0.0';
-const CONTACT_EMAIL = 'contato@compensaapp.com';
+const CONTACT_EMAIL = 'jvobsystems@gmail.com';
 
 const PRIVACY_POLICY = `POLÍTICA DE PRIVACIDADE — COMPENSA APP
 Última atualização: Fevereiro 2026
