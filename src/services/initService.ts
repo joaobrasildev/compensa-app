@@ -79,6 +79,9 @@ export async function refreshMarketData(): Promise<void> {
             lastFetchDate: todayStr,
         });
 
+        // Sincroniza taxa fixa com SELIC se usuário nunca editou
+        useConfigStore.getState().setFixedRateFromMarket(selicRate);
+
         setHasCache(true);
         useAppStore.getState().setDataSource('live');
     } catch {
@@ -107,6 +110,9 @@ function loadFromCache(): void {
             lastFetchDate: btcCache.fetched_at.slice(0, 10),
         });
 
+        // Sincroniza taxa fixa com SELIC se usuário nunca editou
+        useConfigStore.getState().setFixedRateFromMarket(selicData.rate);
+
         setHasCache(true);
         setDataSource('cache');
     } else {
@@ -127,6 +133,9 @@ function loadFromFallback(): void {
         selicRate: FALLBACK_MARKET_DATA.selicRate,
         lastFetchDate: FALLBACK_MARKET_DATA.fetchedAt.slice(0, 10),
     });
+
+    // Sincroniza taxa fixa com SELIC se usuário nunca editou
+    useConfigStore.getState().setFixedRateFromMarket(FALLBACK_MARKET_DATA.selicRate);
 
     setHasCache(false);
     setDataSource('fallback');

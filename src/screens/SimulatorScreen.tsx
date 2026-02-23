@@ -77,9 +77,12 @@ function SimulatorScreen() {
         setRefreshing(false);
     }, []);
 
+    const markUserRate = useConfigStore((s) => s.markUserRate);
+
     const handleRateChange = useCallback(
         (text: string) => {
             hasUserEditedRate.current = true;
+            markUserRate();
             setRateInput(text);
             const cleaned = text.replace(',', '.');
             const parsed = parseFloat(cleaned);
@@ -87,7 +90,7 @@ function SimulatorScreen() {
                 setFixedRate(parsed);
             }
         },
-        [setFixedRate],
+        [setFixedRate, markUserRate],
     );
 
     const handleOpenModal = useCallback(() => {
