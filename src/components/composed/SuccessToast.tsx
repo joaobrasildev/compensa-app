@@ -3,6 +3,7 @@
 
 import React, { useEffect, useRef, useCallback } from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { colors, sizes, spacing, zIndices, radii, borderWidths } from '@/theme';
 import { useAppStore } from '@/stores/useAppStore';
 import AppText from '@/components/base/AppText';
@@ -16,6 +17,7 @@ function SuccessToast() {
     const toastMessage = useAppStore((s) => s.toastMessage);
     const toastSub = useAppStore((s) => s.toastSub);
     const hideToast = useAppStore((s) => s.hideToast);
+    const insets = useSafeAreaInsets();
 
     const translateY = useRef(new Animated.Value(-120)).current;
     const opacity = useRef(new Animated.Value(0)).current;
@@ -79,6 +81,7 @@ function SuccessToast() {
             style={[
                 styles.container,
                 {
+                    top: insets.top + spacing['2xl'],
                     transform: [{ translateY }],
                     opacity,
                 },
@@ -106,7 +109,6 @@ function SuccessToast() {
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        top: spacing['2xl'],
         left: spacing['2xl'],
         right: spacing['2xl'],
         zIndex: zIndices.toast,
