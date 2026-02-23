@@ -23,9 +23,6 @@
             }
         },
         "production": {
-            "env": {
-                "NODE_ENV": "production"
-            },
             "ios": {
                 "image": "latest",
                 "autoIncrement": "buildNumber"
