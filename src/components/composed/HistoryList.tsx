@@ -13,11 +13,13 @@ import EmptyState from '@/components/base/EmptyState';
 type HistoryListProps = {
     savings: EnrichedSaving[];
     onDeleteRequest: (id: number) => void;
+    collapsingId: number | null;
+    onCollapseEnd: (id: number) => void;
 };
 
 const keyExtractor = (item: EnrichedSaving) => item.id.toString();
 
-function HistoryList({ savings, onDeleteRequest }: HistoryListProps) {
+function HistoryList({ savings, onDeleteRequest, collapsingId, onCollapseEnd }: HistoryListProps) {
     const [openSwipeId, setOpenSwipeId] = useState<number | null>(null);
 
     const handleSwipeOpen = useCallback((id: number) => {
@@ -38,9 +40,11 @@ function HistoryList({ savings, onDeleteRequest }: HistoryListProps) {
                 onDeleteRequest={handleDeleteRequest}
                 isSwipeOpen={openSwipeId === item.id}
                 onSwipeOpen={handleSwipeOpen}
+                isCollapsing={collapsingId === item.id}
+                onCollapseEnd={onCollapseEnd}
             />
         ),
-        [openSwipeId, handleDeleteRequest, handleSwipeOpen],
+        [openSwipeId, handleDeleteRequest, handleSwipeOpen, collapsingId, onCollapseEnd],
     );
 
     if (savings.length === 0) {

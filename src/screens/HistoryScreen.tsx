@@ -24,6 +24,7 @@ function HistoryScreen() {
     // ── State local para fluxo de exclusão ──
     const [deleteModalVisible, setDeleteModalVisible] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState<number | null>(null);
+    const [collapsingId, setCollapsingId] = useState<number | null>(null);
 
     // ── Cálculos memoizados ──
     const enrichedSavings = useMemo(
@@ -55,11 +56,16 @@ function HistoryScreen() {
 
     const handleConfirmDelete = useCallback(() => {
         if (pendingDeleteId != null) {
-            deleteSaving(pendingDeleteId);
+            setCollapsingId(pendingDeleteId);
         }
         setDeleteModalVisible(false);
         setPendingDeleteId(null);
-    }, [pendingDeleteId, deleteSaving]);
+    }, [pendingDeleteId]);
+
+    const handleCollapseEnd = useCallback((id: number) => {
+        deleteSaving(id);
+        setCollapsingId(null);
+    }, [deleteSaving]);
 
     return (
         <View style={styles.container}>
@@ -77,6 +83,8 @@ function HistoryScreen() {
                 <HistoryList
                     savings={enrichedSavings}
                     onDeleteRequest={handleDeleteRequest}
+                    collapsingId={collapsingId}
+                    onCollapseEnd={handleCollapseEnd}
                 />
             </View>
 

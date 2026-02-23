@@ -36,6 +36,7 @@ function SimulatorScreen() {
     const setFixedRate = useConfigStore((s) => s.setFixedRate);
     const addSaving = useSavingsStore((s) => s.addSaving);
     const dataSource = useAppStore((s) => s.dataSource);
+    const showToast = useAppStore((s) => s.showToast);
 
     // ── State local ──
     const [modalVisible, setModalVisible] = useState(false);
@@ -120,8 +121,12 @@ function SimulatorScreen() {
             addSaving(newSaving);
             setModalVisible(false);
             reset();
+            showToast(
+                'Economia registrada!',
+                'Confira nas abas Resumo e Histórico',
+            );
         },
-        [numericValue, btcPrice, fixedRate, selicRate, cagrs, addSaving, reset],
+        [numericValue, btcPrice, fixedRate, selicRate, cagrs, addSaving, reset, showToast],
     );
 
     return (

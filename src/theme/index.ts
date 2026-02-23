@@ -65,6 +65,10 @@ export const colors = {
     // Ad Banner
     adBannerBg: '#0a0a0f',
     adBorderTop: '#1a1a2e',
+
+    // Toast
+    toastBg: '#0d2818',
+    toastBorder: '#1a5c2e',
 } as const;
 
 export const fonts = {
@@ -243,6 +247,14 @@ export const sizes = {
     // Ad Banner
     adBannerHeight: 60,
     adBannerPaddingV: 5,
+
+    // Toast
+    toastPaddingV: 12,
+    toastPaddingH: 16,
+    toastFontSize: 14,
+    toastSubFontSize: 12,
+    toastIconSize: 20,
+    toastBorderRadius: 12,
 } as const;
 
 export const spacing = {
@@ -274,6 +286,7 @@ export const opacity = {
 
 export const zIndices = {
     local: 1,
+    toast: 15,
     modal: 20,
     overlay: 30,
 } as const;

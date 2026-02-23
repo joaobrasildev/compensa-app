@@ -14,6 +14,7 @@ import LoadingOverlay from '@/components/base/LoadingOverlay';
 import AppText from '@/components/base/AppText';
 import AppButton from '@/components/base/AppButton';
 import AdBanner from '@/components/composed/AdBanner';
+import SuccessToast from '@/components/composed/SuccessToast';
 import LegalScreen from '@/screens/LegalScreen';
 
 /**
@@ -86,6 +87,7 @@ export default function App() {
                         <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
                         <TopTabNavigator />
                         <AdBanner />
+                        <SuccessToast />
 
                         {/* Modal Legal (full-screen) */}
                         <Modal
