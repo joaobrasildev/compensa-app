@@ -26,7 +26,6 @@
             "env": {
                 "NODE_ENV": "production"
             },
-            "prebuildCommand": "node scripts/fetch-fallback-data.js",
             "ios": {
                 "image": "latest",
                 "autoIncrement": "buildNumber"
