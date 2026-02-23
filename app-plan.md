@@ -1,7 +1,7 @@
 # Compensa App — Plano de Implementação
 
 > Simulador comportamental financeiro. "Quanto você teria se tivesse investido em vez de gastar?"
-> 100% client-side. Sem backend, sem login, sem ads. Dados ficam no dispositivo.
+> 100% client-side. Sem backend, sem login. Dados ficam no dispositivo. Monetização via banner AdMob não intrusivo.
 
 ### ⚠️ REFERÊNCIA VISUAL OBRIGATÓRIA
 
@@ -25,6 +25,7 @@ O arquivo `prototype/index.html` é o protótipo visual validado do app. **Consu
 | zustand | 5.x |
 | react-native-svg | última estável |
 | expo-linear-gradient | última |
+| react-native-google-mobile-ads | última |
 
 **Build:** EAS Build + EAS Submit.
 **iOS:** Build com iOS 26 SDK (Xcode 26+), deployment target iOS 16.0.
@@ -67,7 +68,8 @@ src/
 │       ├── SaveButton.tsx
 │       ├── SaveModal.tsx
 │       ├── DisclaimerText.tsx
-│       └── AttributionFooter.tsx
+│       ├── AttributionFooter.tsx
+│       └── AdBanner.tsx
 │
 ├── screens/
 │   ├── SimulatorScreen.tsx
@@ -161,6 +163,8 @@ export const colors = {
   blue: '#2d98da', blueSoft: 'rgba(45, 152, 218, 0.15)',
   backdrop: 'rgba(0, 0, 0, 0.7)', overlayBg: 'rgba(10, 10, 15, 0.8)',
   black: '#000000', transparent: 'transparent',
+  // Ad Banner
+  adBannerBg: '#0a0a0f', adBorderTop: '#1a1a2e',
 } as const;
 
 export const fonts = {
@@ -217,6 +221,8 @@ export const sizes = {
   // Chart (gráfico de barras empilhadas)
   chartHeight: 160, chartBarWidth: 28, chartBarRadius: 4,
   chartLabelSize: 9, chartYLabelSize: 9, chartYLabelWidth: 48, chartMaxMonths: 6,
+  // Ad Banner
+  adBannerHeight: 60, adBannerPaddingV: 5,
 } as const;
 
 export const spacing = {
@@ -471,6 +477,19 @@ type Props = { compact?: boolean; };
 ### `AttributionFooter`
 Sem props. Texto: "Dados: CoinGecko • Banco Central do Brasil" + "Sobre / Legal →" (touchable, abre `LegalScreen`).
 Cor `textMuted`, tamanho `textXs`.
+
+### `AdBanner`
+```typescript
+type Props = {};  // sem props — autossuficiente
+```
+Banner de anúncio Google AdMob fixo na parte inferior do app (fora das abas).
+- Renderiza `BannerAd` de `react-native-google-mobile-ads` com `BannerAdSize.ANCHORED_ADAPTIVE_BANNER`.
+- Container: `height: sizes.adBannerHeight`, `backgroundColor: colors.adBannerBg`, `borderTopWidth: borderWidths.thin`, `borderTopColor: colors.adBorderTop`, centralizado horizontalmente.
+- **Estado de loading:** Container vazio com altura fixa (evita layout jump).
+- **Erro no carregamento:** Container vazio (sem exibir nada — espaço permanece reservado para evitar layout shift).
+- `React.memo`. Sem acessibilidade especial (o SDK do AdMob cuida disso).
+- Ad Unit IDs via constantes: test IDs em `__DEV__`, IDs reais em produção.
+- Configuração: `requestNonPersonalizedAdsOnly: true` (anúncios não personalizados — dispensa ATT no iOS, simplifica compliance LGPD).
 
 ---
 
@@ -955,6 +974,18 @@ App.tsx → LoadingOverlay visível
     5. appStore.setReady() → remove loading → TopTabNavigator
 ```
 
+**Layout do `App.tsx` após boot:**
+```
+<GestureHandlerRootView style={{flex:1}}>
+  <SafeAreaView style={{flex:1, backgroundColor: colors.bgPrimary}}>
+    <StatusBar />
+    {isReady ? <TopTabNavigator /> : <LoadingOverlay />}
+    {isReady && <AdBanner />}
+  </SafeAreaView>
+</GestureHandlerRootView>
+```
+O `TopTabNavigator` mantém `flex: 1` e ocupa o espaço restante. O `AdBanner` fica **fora** das abas, sempre visível na parte inferior. O `SaveButton` (position absolute dentro do SimulatorScreen) fica naturalmente acima do banner sem precisar de ajuste, pois é relativo ao container da aba.
+
 O app NUNCA trava por falta de conexão. O fallback embutido garante funcionamento offline total.
 
 ---
@@ -1048,7 +1079,17 @@ O app NUNCA trava por falta de conexão. O fallback embutido garante funcionamen
       },
       "permissions": []
     },
-    "plugins": ["expo-sqlite"],
+    "plugins": [
+      "expo-sqlite",
+      [
+        "react-native-google-mobile-ads",
+        {
+          "androidAppId": "ca-app-pub-9302632754670115~6500897228",
+          "iosAppId": "ca-app-pub-9302632754670115~6990658878",
+          "userTrackingUsageDescription": "Este identificador será usado para exibir anúncios relevantes."
+        }
+      ]
+    ],
     "extra": {
       "eas": { "projectId": "[DEFINIR APÓS CRIAR PROJETO NO EAS]" }
     }
@@ -1114,14 +1155,14 @@ Dados armazenados LOCALMENTE no dispositivo:
 2. DADOS DE MERCADO
 Requisições a APIs públicas (CoinGecko, Banco Central do Brasil). Requisições NÃO incluem dados pessoais. Nenhum identificador do dispositivo é enviado.
 
-3. TERCEIROS
-NÃO utiliza: analytics, publicidade, SDKs de rastreamento, crash reporting com dados pessoais.
+3. TERCEIROS E PUBLICIDADE
+O app utiliza o Google AdMob para exibição de anúncios não personalizados (banner). O SDK do AdMob pode coletar identificadores de dispositivo para fins de exibição e mensuração de anúncios, conforme a Política de Privacidade do Google (https://policies.google.com/privacy). NÃO utiliza: analytics, crash reporting com dados pessoais, SDKs de rastreamento além do AdMob.
 
 4. ARMAZENAMENTO E SEGURANÇA
 Dados no sandbox do app, protegidos pelo OS. Sem backup em nuvem.
 
 5. COMPARTILHAMENTO
-NÃO compartilha dados com terceiros.
+Dados locais do app NÃO são compartilhados com terceiros. O SDK do Google AdMob opera de forma independente e pode coletar dados conforme sua própria política de privacidade.
 
 6. RETENÇÃO E EXCLUSÃO
 Dados retidos enquanto o app estiver instalado. Para excluir: desinstalar o app ou excluir registros individualmente.
@@ -1447,11 +1488,90 @@ Todos os 14 componentes de `components/composed/` (seção 5), incluindo o novo 
 - Testes em dispositivos reais
 - Bundle size < 25MB
 
+### Fase 8.1 — Monetização (AdMob)
+
+> **Contexto:** Banner de anúncio não intrusivo na parte inferior do app, visível em todas as abas. Anúncios não personalizados (`requestNonPersonalizedAdsOnly: true`) para manter a proposta privacy-first e dispensar ATT no iOS.
+
+> **Pré-requisito:** Requer EAS Build (o SDK do AdMob tem código nativo que não roda no Expo Go).
+
+#### 8.1.1 — Conta e configuração AdMob (manual)
+
+1. Criar conta no [Google AdMob](https://admob.google.com)
+2. Registrar dois apps: um iOS, um Android
+3. Criar Ad Units tipo **Banner** para cada plataforma
+4. Anotar os App IDs (formato `ca-app-pub-XXXXXXXX~YYYYYYYY`) e Ad Unit IDs
+
+#### 8.1.2 — Instalar dependência
+
+```bash
+npx expo install react-native-google-mobile-ads
+```
+
+#### 8.1.3 — Configurar plugin no `app.json`
+
+Atualizar o array `plugins` conforme seção 14 (já documentado). Os App IDs reais já estão configurados: Android `ca-app-pub-9302632754670115~6500897228`, iOS `ca-app-pub-9302632754670115~6990658878`.
+
+#### 8.1.4 — Adicionar tokens no theme
+
+Adicionar em `src/theme/index.ts` os tokens `adBannerBg`, `adBorderTop` (colors) e `adBannerHeight`, `adBannerPaddingV` (sizes), conforme seção 3.
+
+#### 8.1.5 — Criar componente `AdBanner.tsx`
+
+**Arquivo:** `src/components/composed/AdBanner.tsx`
+
+Implementar conforme especificação da seção 5:
+
+```typescript
+import { BannerAd, BannerAdSize, TestIds } from 'react-native-google-mobile-ads';
+
+const AD_UNIT_ID = __DEV__
+  ? TestIds.ADAPTIVE_BANNER
+  : Platform.select({
+      ios: 'ca-app-pub-9302632754670115/3627321872',
+      android: 'ca-app-pub-9302632754670115/6253485210',
+    }) ?? '';
+```
+
+- Container com altura fixa `sizes.adBannerHeight`, bg `colors.adBannerBg`, borda top `colors.adBorderTop`.
+- `requestNonPersonalizedAdsOnly: true` na configuração do request.
+- `onAdFailedToLoad`: silencioso (container vazio permanece).
+- `React.memo`.
+
+#### 8.1.6 — Integrar no `App.tsx`
+
+Adicionar `<AdBanner />` após o `TopTabNavigator` no layout do `App.tsx`, conforme seção 12. O banner fica fora das abas, sempre visível.
+
+#### 8.1.7 — Atualizar textos legais
+
+- Atualizar `LegalScreen` (seções 3 e 5 da Política de Privacidade) conforme seção 15.
+- Atualizar `docs/privacy-policy.html` (versão hospedada) com as mesmas alterações.
+
+#### 8.1.8 — Testar
+
+- Em dev: usar Test Ad IDs (`TestIds.ADAPTIVE_BANNER`) — **NUNCA** clicar em anúncios de teste repetidamente (viola política AdMob).
+- Em preview build: validar que o banner aparece, não cobre conteúdo, não interfere com scroll/swipe.
+- Verificar que `SaveButton` no SimulatorScreen permanece acima do banner.
+- Testar offline: banner some mas espaço permanece (sem layout shift).
+
+#### 8.1.9 — Checklist de implementação
+
+| # | Arquivo | Alteração |
+|---|---|---|
+| 1 | `package.json` | Instalar `react-native-google-mobile-ads` |
+| 2 | `app.json` | Adicionar plugin com App IDs |
+| 3 | `src/theme/index.ts` | Adicionar tokens `adBannerBg`, `adBorderTop`, `adBannerHeight`, `adBannerPaddingV` |
+| 4 | `src/components/composed/AdBanner.tsx` | **NOVO** — Componente de banner AdMob |
+| 5 | `src/App.tsx` | Adicionar `<AdBanner />` no layout |
+| 6 | `src/screens/LegalScreen.tsx` | Atualizar Política de Privacidade (seções 3 e 5) |
+| 7 | `docs/privacy-policy.html` | Atualizar versão hospedada |
+
+> **Dependência:** Fase 8 deve estar completa. Os itens 1-3 são setup. Os itens 4-5 são implementação. Os itens 6-7 são compliance. O item do painel AdMob (8.1.1) é manual.
+
 ### Fase 9 — Build & Submissão
 - Contas dev (Apple $99 + Google $25)
 - EAS Build production
 - Screenshots para todas as resoluções
-- App Store Connect: metadata, screenshots, keywords, categoria Finance, Privacy Labels ("Data Not Collected"), Age Rating (4+), Export Compliance, Review Notes
-- Google Play Console: metadata, screenshots, Feature Graphic (1024×500), Data Safety, IARC, categoria Finance
+- App Store Connect: metadata, screenshots, keywords, categoria Finance, Privacy Labels (declarar "Advertising Data" coletado pelo AdMob — **não linked to identity**, **used for advertising**), Age Rating (4+), Export Compliance, Review Notes
+- Google Play Console: metadata, screenshots, Feature Graphic (1024×500), Data Safety (declarar SDK de anúncios AdMob, dados coletados para publicidade), IARC, categoria Finance
 - EAS Submit
 - Monitorar review

@@ -13,6 +13,7 @@ import TopTabNavigator from '@/navigation/TopTabNavigator';
 import LoadingOverlay from '@/components/base/LoadingOverlay';
 import AppText from '@/components/base/AppText';
 import AppButton from '@/components/base/AppButton';
+import AdBanner from '@/components/composed/AdBanner';
 import LegalScreen from '@/screens/LegalScreen';
 
 /**
@@ -84,6 +85,7 @@ export default function App() {
                     <SafeAreaView style={styles.container} edges={['top']}>
                         <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
                         <TopTabNavigator />
+                        <AdBanner />
 
                         {/* Modal Legal (full-screen) */}
                         <Modal

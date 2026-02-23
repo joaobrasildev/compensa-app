@@ -29,14 +29,14 @@ Dados armazenados LOCALMENTE no dispositivo:
 2. DADOS DE MERCADO
 Requisições a APIs públicas (CoinGecko, Banco Central do Brasil). Requisições NÃO incluem dados pessoais. Nenhum identificador do dispositivo é enviado.
 
-3. TERCEIROS
-NÃO utiliza: analytics, publicidade, SDKs de rastreamento, crash reporting com dados pessoais.
+3. TERCEIROS E PUBLICIDADE
+O app utiliza o Google AdMob para exibir anúncios em formato banner. Os anúncios são configurados como NÃO personalizados — o AdMob NÃO coleta identificadores pessoais para segmentação. O app NÃO utiliza: analytics, SDKs de rastreamento ou crash reporting com dados pessoais.
 
 4. ARMAZENAMENTO E SEGURANÇA
 Dados no sandbox do app, protegidos pelo OS. Sem backup em nuvem.
 
 5. COMPARTILHAMENTO
-NÃO compartilha dados com terceiros.
+O app NÃO compartilha seus dados locais com terceiros. O Google AdMob opera de forma independente para exibir anúncios não personalizados, sem acesso aos dados armazenados pelo app.
 
 6. RETENÇÃO E EXCLUSÃO
 Dados retidos enquanto o app estiver instalado. Para excluir: desinstalar o app ou excluir registros individualmente.

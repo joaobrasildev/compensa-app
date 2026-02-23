@@ -35,11 +35,19 @@
             "permissions": []
         },
         "plugins": [
-            "expo-sqlite"
+            "expo-sqlite",
+            [
+                "react-native-google-mobile-ads",
+                {
+                    "androidAppId": "ca-app-pub-9302632754670115~6500897228",
+                    "iosAppId": "ca-app-pub-9302632754670115~6990658878",
+                    "userTrackingUsageDescription": "Este identificador será usado para exibir anúncios relevantes."
+                }
+            ]
         ],
         "extra": {
             "eas": {
-                "projectId": "DEFINIR_APOS_CRIAR_PROJETO_NO_EAS"
+                "projectId": "b9ce19db-5256-4c00-8b9c-b0cb157756da"
             }
         }
     }

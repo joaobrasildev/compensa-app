@@ -61,6 +61,10 @@ export const colors = {
     // Absolutos
     black: '#000000',
     transparent: 'transparent',
+
+    // Ad Banner
+    adBannerBg: '#0a0a0f',
+    adBorderTop: '#1a1a2e',
 } as const;
 
 export const fonts = {
@@ -235,6 +239,10 @@ export const sizes = {
     chartYLabelSize: 9,
     chartYLabelWidth: 48,
     chartMaxMonths: 6,
+
+    // Ad Banner
+    adBannerHeight: 60,
+    adBannerPaddingV: 5,
 } as const;
 
 export const spacing = {
