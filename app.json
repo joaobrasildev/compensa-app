@@ -27,7 +27,7 @@
     },
     "android": {
       "package": "com.compensaapp.compensa",
-      "versionCode": 6,
+      "versionCode": 9,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#000000"
