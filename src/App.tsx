@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { colors, spacing, sizes } from '@/theme';
 import { useInitApp } from '@/hooks/useInitApp';
+import { useTrackingPermission } from '@/hooks/useTrackingPermission';
 import { useAppStore } from '@/stores/useAppStore';
 import TopTabNavigator from '@/navigation/TopTabNavigator';
 import LoadingOverlay from '@/components/base/LoadingOverlay';
@@ -26,6 +27,7 @@ import LegalScreen from '@/screens/LegalScreen';
  */
 export default function App() {
     const { isReady, isLoading, error } = useInitApp();
+    const trackingStatus = useTrackingPermission(isReady);
     const hasCache = useAppStore((s) => s.hasCache);
     const legalVisible = useAppStore((s) => s.legalVisible);
     const setLegalVisible = useAppStore((s) => s.setLegalVisible);
@@ -86,7 +88,7 @@ export default function App() {
                     <SafeAreaView style={styles.container} edges={['top']}>
                         <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
                         <TopTabNavigator />
-                        <AdBanner />
+                        {trackingStatus !== 'loading' && <AdBanner nonPersonalized={trackingStatus === 'denied'} />}
                         <SuccessToast />
 
                         {/* Modal Legal (full-screen) */}

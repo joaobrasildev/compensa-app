@@ -15,14 +15,15 @@
     },
     "ios": {
       "bundleIdentifier": "com.compensaapp.compensa",
-      "buildNumber": "3",
+      "buildNumber": "6",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
         "CFBundleDevelopmentRegion": "pt-BR",
         "CFBundleLocalizations": [
           "pt-BR"
-        ]
+        ],
+        "NSUserTrackingUsageDescription": "Este app utiliza identificadores para exibir anúncios relevantes. Seus dados não são compartilhados com terceiros."
       }
     },
     "android": {
@@ -42,7 +43,8 @@
           "androidAppId": "ca-app-pub-9302632754670115~6500897228",
           "iosAppId": "ca-app-pub-9302632754670115~6990658878"
         }
-      ]
+      ],
+      "expo-tracking-transparency"
     ],
     "extra": {
       "eas": {

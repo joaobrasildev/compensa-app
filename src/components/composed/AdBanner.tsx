@@ -11,7 +11,12 @@ const AD_UNIT_ID = __DEV__
         android: 'ca-app-pub-9302632754670115/6253485210',
     }) ?? '';
 
-const AdBanner = React.memo(function AdBanner() {
+type AdBannerProps = {
+    /** Se true, solicita apenas anúncios não-personalizados (ATT negado) */
+    nonPersonalized?: boolean;
+};
+
+const AdBanner = React.memo(function AdBanner({ nonPersonalized = true }: AdBannerProps) {
     const [adError, setAdError] = useState(false);
 
     const handleAdFailedToLoad = useCallback(() => {
@@ -29,7 +34,7 @@ const AdBanner = React.memo(function AdBanner() {
                     unitId={AD_UNIT_ID}
                     size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
                     requestOptions={{
-                        requestNonPersonalizedAdsOnly: true,
+                        requestNonPersonalizedAdsOnly: nonPersonalized,
                     }}
                     onAdFailedToLoad={handleAdFailedToLoad}
                 />
