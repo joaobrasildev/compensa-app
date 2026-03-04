@@ -15,7 +15,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.compensaapp.compensa",
-      "buildNumber": "6",
+      "buildNumber": "8",
       "supportsTablet": true,
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
@@ -41,10 +41,16 @@
         "react-native-google-mobile-ads",
         {
           "androidAppId": "ca-app-pub-9302632754670115~6500897228",
-          "iosAppId": "ca-app-pub-9302632754670115~6990658878"
+          "iosAppId": "ca-app-pub-9302632754670115~6990658878",
+          "delay_app_measurement_init": true
         }
       ],
-      "expo-tracking-transparency"
+      [
+        "expo-tracking-transparency",
+        {
+          "userTrackingPermission": "Este app utiliza identificadores para exibir anúncios relevantes. Seus dados não são compartilhados com terceiros."
+        }
+      ]
     ],
     "extra": {
       "eas": {
