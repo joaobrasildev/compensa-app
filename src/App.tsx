@@ -1,11 +1,12 @@
 // src/App.tsx
 // Entry point do Compensa App — boot flow (seção 12)
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, StatusBar, Modal } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { MobileAds } from 'react-native-google-mobile-ads';
 import { colors, spacing, sizes } from '@/theme';
 import { useInitApp } from '@/hooks/useInitApp';
 import { useTrackingPermission } from '@/hooks/useTrackingPermission';
@@ -31,6 +32,21 @@ export default function App() {
     const hasCache = useAppStore((s) => s.hasCache);
     const legalVisible = useAppStore((s) => s.legalVisible);
     const setLegalVisible = useAppStore((s) => s.setLegalVisible);
+    const [adSdkReady, setAdSdkReady] = useState(false);
+
+    // Inicializa o SDK do Google Mobile Ads SOMENTE após ATT ser resolvido.
+    // Garante que nenhum dado é coletado antes do consentimento do usuário.
+    useEffect(() => {
+        if (trackingStatus === 'loading') return;
+        // No Android, inicializa direto (não tem ATT)
+        // No iOS, só inicializa após ATT respondido (granted ou denied)
+        let cancelled = false;
+        MobileAds()
+            .initialize()
+            .then(() => { if (!cancelled) setAdSdkReady(true); })
+            .catch(() => { if (!cancelled) setAdSdkReady(true); });
+        return () => { cancelled = true; };
+    }, [trackingStatus]);
 
     const handleRetry = useCallback(() => {
         // Re-inicializa o app
@@ -88,7 +104,12 @@ export default function App() {
                     <SafeAreaView style={styles.container} edges={['top']}>
                         <StatusBar barStyle="light-content" backgroundColor={colors.bgPrimary} />
                         <TopTabNavigator />
-                        {trackingStatus !== 'loading' && <AdBanner nonPersonalized={trackingStatus === 'denied'} />}
+                        {trackingStatus !== 'loading' && (
+                            <AdBanner
+                                nonPersonalized={trackingStatus === 'denied'}
+                                sdkReady={adSdkReady}
+                            />
+                        )}
                         <SuccessToast />
 
                         {/* Modal Legal (full-screen) */}

@@ -1,10 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 import {
     BannerAd,
     BannerAdSize,
     TestIds,
-    MobileAds,
 } from 'react-native-google-mobile-ads';
 
 import { colors, sizes } from '@/theme';
@@ -19,30 +18,12 @@ const AD_UNIT_ID = __DEV__
 type AdBannerProps = {
     /** Se true, solicita apenas anúncios não-personalizados (ATT negado) */
     nonPersonalized?: boolean;
+    /** Indica que o SDK do Google Mobile Ads já foi inicializado */
+    sdkReady?: boolean;
 };
 
-const AdBanner = React.memo(function AdBanner({ nonPersonalized = true }: AdBannerProps) {
+const AdBanner = React.memo(function AdBanner({ nonPersonalized = true, sdkReady = false }: AdBannerProps) {
     const [adError, setAdError] = useState(false);
-    const [sdkReady, setSdkReady] = useState(false);
-
-    // Inicializa o SDK do Google Mobile Ads manualmente.
-    // Isso é necessário porque usamos delay_app_measurement_init = true
-    // para que o SDK NÃO colete dados antes do prompt ATT.
-    useEffect(() => {
-        let cancelled = false;
-        MobileAds()
-            .initialize()
-            .then(() => {
-                if (!cancelled) setSdkReady(true);
-            })
-            .catch(() => {
-                // Se falhar a inicialização, tenta renderizar mesmo assim
-                if (!cancelled) setSdkReady(true);
-            });
-        return () => {
-            cancelled = true;
-        };
-    }, []);
 
     const handleAdFailedToLoad = useCallback(() => {
         setAdError(true);

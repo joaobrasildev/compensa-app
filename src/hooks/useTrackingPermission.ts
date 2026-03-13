@@ -13,8 +13,9 @@ import {
 
 export type TrackingState = 'loading' | 'granted' | 'denied';
 
-/** Delay (ms) após o app estar ativo para exibir o prompt ATT */
-const ATT_DELAY_MS = 1200;
+/** Delay (ms) após o app estar ativo para exibir o prompt ATT.
+ *  iPadOS 26+ exige que o app esteja totalmente renderizado e interativo. */
+const ATT_DELAY_MS = 1500;
 
 /**
  * Aguarda até que AppState esteja 'active'.
@@ -82,7 +83,7 @@ export function useTrackingPermission(isReady: boolean): TrackingState {
                 await delay(ATT_DELAY_MS);
                 if (cancelled) return;
 
-                // 4. Verifica se já tem permissão
+                // 4. Verifica se já tem permissão concedida
                 const current = await getTrackingPermissionsAsync();
 
                 if (current.status === PermissionStatus.GRANTED) {
@@ -90,12 +91,14 @@ export function useTrackingPermission(isReady: boolean): TrackingState {
                     return;
                 }
 
+                // Se já foi negado anteriormente, não exibe prompt novamente
+                // (iOS não re-exibe o dialog; request retorna denied direto)
                 if (current.status === PermissionStatus.DENIED) {
                     if (!cancelled) setStatus('denied');
                     return;
                 }
 
-                // 5. Solicita permissão (exibe o dialog nativo)
+                // 5. Status UNDETERMINED → solicita permissão (exibe o dialog nativo)
                 const result = await requestTrackingPermissionsAsync();
                 if (!cancelled) {
                     setStatus(
