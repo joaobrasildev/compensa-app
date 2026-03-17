@@ -10,7 +10,7 @@ import HistoryScreen from '@/screens/HistoryScreen';
 import TipsScreen from '@/screens/TipsScreen';
 
 export type TopTabParamList = {
-    Simulador: undefined;
+    Simular: undefined;
     Resumo: undefined;
     'Histórico': undefined;
     Dicas: undefined;
@@ -27,7 +27,7 @@ const TAB_BAR_STYLE = {
 } as const;
 
 const TAB_BAR_LABEL_STYLE = {
-    fontSize: sizes.textLg,
+    fontSize: sizes.textMd,
     fontWeight: fonts.weight.semibold,
     textTransform: 'none' as const,
 };
@@ -46,11 +46,12 @@ function TopTabNavigator() {
                 tabBarActiveTintColor: colors.textPrimary,
                 tabBarInactiveTintColor: colors.textMuted,
                 tabBarIndicatorStyle: TAB_BAR_INDICATOR_STYLE,
+                tabBarAllowFontScaling: false,
                 swipeEnabled: true,
                 lazy: true,
             }}
         >
-            <Tab.Screen name="Simulador" component={SimulatorScreen} />
+            <Tab.Screen name="Simular" component={SimulatorScreen} />
             <Tab.Screen name="Resumo" component={SummaryScreen} />
             <Tab.Screen name="Histórico" component={HistoryScreen} />
             <Tab.Screen name="Dicas" component={TipsScreen} />
